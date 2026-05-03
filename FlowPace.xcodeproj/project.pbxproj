@@ -91,39 +91,7 @@
 		A1234567890123456789043 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */,
-				0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */,
-				0D63D3552E652A33006BBE0C /* TermsOfServiceView.swift */,
-				0D63D3532E652A27006BBE0C /* PrivacyPolicyView.swift */,
-				A1234567890123456789021 /* RoutineListView.swift */,
-				A1234567890123456789023 /* RoutineEditorView.swift */,
-				A1234567890123456789025 /* ActiveTimerView.swift */,
-				A1234567890123456789060 /* AddStepView.swift */,
-				A1234567890123456789061 /* AddGroupView.swift */,
-				A1234567890123456789062 /* EditItemView.swift */,
-				A1234567890123456789063 /* SettingsView.swift */,
-				A1234567890123456789068 /* SplashScreenView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		A1234567890123456789044 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				A1234567890123456789027 /* Models.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		A1234567890123456789045 /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				0DC84AB72E6647A700D7BB69 /* BackgroundColorManager.swift */,
-				A1234567890123456789029 /* RoutineManager.swift */,
-				A1234567890123456789031 /* TimerManager.swift */,
-				A1234567890123456789033 /* AudioManager.swift */,
-				A1234567890123456789035 /* HapticManager.swift */,
-				A1234567890123456789037 /* StoreKitManager.swift */,
+			0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -180,7 +148,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
-				LastUpgradeCheck = 1640;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					A1234567890123456789049 = {
 						CreatedOnToolsVersion = 16.4;
@@ -307,6 +275,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -363,6 +332,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
