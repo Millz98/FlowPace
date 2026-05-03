@@ -3,6 +3,8 @@ import CloudKit
 
 @MainActor
 class CloudKitManager: ObservableObject {
+    private static let containerIdentifier = "iCloud.com.flowpace.app"
+    
     @Published var isSyncing = false
     @Published var lastSyncDate: Date?
     @Published var syncError: String?
@@ -18,7 +20,7 @@ class CloudKitManager: ObservableObject {
     private let groupRecordType = "Group"
     
     init() {
-        container = CKContainer.default()
+        container = CKContainer(identifier: Self.containerIdentifier)
         privateDatabase = container.privateCloudDatabase
         checkCloudAvailability()
     }

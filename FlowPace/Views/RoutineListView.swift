@@ -292,21 +292,6 @@ struct RoutineListView: View {
             }
         }
         .navigationBarHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { showingSettings = true }) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.title2)
-                        .foregroundColor(.primary)
-                        .padding(12)
-                        .background(
-                            Circle()
-                                .fill(Color(.systemBackground).opacity(0.8))
-                                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-                        )
-                }
-            }
-        }
             .sheet(isPresented: $showingCreateRoutine) {
                 RoutineEditorView()
                     .environmentObject(routineManager)

@@ -24,7 +24,7 @@ class StoreKitManager: ObservableObject {
             ProFeature(icon: "widget.small", title: "Home Screen Widgets", description: "Quick-start routines from your home screen")
         ]
     }
-    private var updateListenerTask: Task<Void, Error>?
+    private var updateListenerTask: Task<Void, Never>?
     
     init() {
         updateListenerTask = listenForTransactions()
@@ -115,10 +115,10 @@ class StoreKitManager: ObservableObject {
         await transaction.finish()
     }
     
-    private func listenForTransactions() -> Task<Void, Error> {
-        return Task.detached {
+    private func listenForTransactions() -> Task<Void, Never> {
+        Task { @MainActor in
             for await result in Transaction.updates {
-                await self.handleTransactionUpdate(result)
+                await handleTransactionUpdate(result)
             }
         }
     }
