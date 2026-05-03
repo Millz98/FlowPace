@@ -10,7 +10,7 @@
 		0D63D3542E652A28006BBE0C /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D63D3532E652A27006BBE0C /* PrivacyPolicyView.swift */; };
 		0D63D3562E652A33006BBE0C /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D63D3552E652A33006BBE0C /* TermsOfServiceView.swift */; };
 		0DC84AB22E65A00600D7BB69 /* ContactSupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */; };
-		0DC84AB62E65A10100D7BB69 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC84AB52E65A10100D7BB69 /* StatsView.swift */; };
+		0DC84AB62E65A10200D7BB69 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */; };
 		0DC84AB82E6647A700D7BB69 /* BackgroundColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC84AB72E6647A700D7BB69 /* BackgroundColorManager.swift */; };
 		A1234567890123456789012 /* FlowPaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789013 /* FlowPaceApp.swift */; };
 		A1234567890123456789014 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789015 /* ContentView.swift */; };
@@ -36,7 +36,7 @@
 		0D63D3532E652A27006BBE0C /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		0D63D3552E652A33006BBE0C /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
 		0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSupportView.swift; sourceTree = "<group>"; };
-		0DC84AB52E65A10100D7BB69 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		0DC84AB72E6647A700D7BB69 /* BackgroundColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundColorManager.swift; sourceTree = "<group>"; };
 		A1234567890123456789013 /* FlowPaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowPaceApp.swift; sourceTree = "<group>"; };
 		A1234567890123456789015 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -91,7 +91,7 @@
 		A1234567890123456789043 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0DC84AB52E65A10100D7BB69 /* StatsView.swift */,
+				0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */,
 				0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */,
 				0D63D3552E652A33006BBE0C /* TermsOfServiceView.swift */,
 				0D63D3532E652A27006BBE0C /* PrivacyPolicyView.swift */,
@@ -239,7 +239,7 @@
 				A1234567890123456789066 /* EditItemView.swift in Sources */,
 				A1234567890123456789067 /* SettingsView.swift in Sources */,
 				A1234567890123456789069 /* SplashScreenView.swift in Sources */,
-				0DC84AB62E65A10100D7BB69 /* StatsView.swift in Sources */,
+				0DC84AB62E65A10200D7BB69 /* AnalyticsView.swift in Sources */,
 				A1234567890123456789012 /* FlowPaceApp.swift in Sources */,
 				0D63D3562E652A33006BBE0C /* TermsOfServiceView.swift in Sources */,
 				0DC84AB22E65A00600D7BB69 /* ContactSupportView.swift in Sources */,
