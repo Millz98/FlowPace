@@ -41,8 +41,12 @@ class CloudKitManager: ObservableObject {
                 case .couldNotDetermine:
                     self?.isCloudAvailable = false
                     self?.syncError = "Unable to determine iCloud status."
+                case .temporarilyUnavailable:
+                    self?.isCloudAvailable = false
+                    self?.syncError = "iCloud is temporarily unavailable. Try again later."
                 @unknown default:
                     self?.isCloudAvailable = false
+                    self?.syncError = "Unexpected iCloud account status."
                 }
             }
         }
@@ -164,7 +168,7 @@ class CloudKitManager: ObservableObject {
     
     // MARK: - Merge Logic
     
-    private func mergeRoutines(local: [Routine], remote: [Routine]) -> [Routine] {
+    private nonisolated func mergeRoutines(local: [Routine], remote: [Routine]) -> [Routine] {
         var mergedDict: [UUID: Routine] = [:]
         
         // Add all local routines
@@ -189,7 +193,7 @@ class CloudKitManager: ObservableObject {
     
     // MARK: - Record Conversion
     
-    private func routineToRecord(_ routine: Routine) -> CKRecord {
+    private nonisolated func routineToRecord(_ routine: Routine) -> CKRecord {
         let record = CKRecord(recordType: routineRecordType, recordID: CKRecord.ID(recordName: routine.id.uuidString, zoneID: routineZoneID))
         
         record["name"] = routine.name as NSString
@@ -204,7 +208,7 @@ class CloudKitManager: ObservableObject {
         return record
     }
     
-    private func parseRoutines(from records: [CKRecord]) -> [Routine] {
+    private nonisolated func parseRoutines(from records: [CKRecord]) -> [Routine] {
         return records.compactMap { record in
             guard let name = record["name"] as? String,
                   let stepsData = record["stepsData"] as? Data,
