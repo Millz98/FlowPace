@@ -13,6 +13,17 @@ class StoreKitManager: ObservableObject {
         "com.flowpace.pro.monthly",      // $1.99 CAD/month subscription  
         "com.flowpace.pro.yearly"        // $7.99 CAD/year subscription
     ]
+    
+    // Pro features available to subscribers
+    var proFeatures: [ProFeature] {
+        [
+            ProFeature(icon: "icloud.fill", title: "iCloud Sync", description: "Sync routines across all your Apple devices"),
+            ProFeature(icon: "chart.line.uptrend.xyaxis", title: "Advanced Analytics", description: "Streaks, trends, and time-per-routine insights"),
+            ProFeature(icon: "infinity", title: "Unlimited Routines", description: "Create as many routines as you need"),
+            ProFeature(icon: "rectangle.stack.fill", title: "Routine Groups", description: "Organize routines into custom groups"),
+            ProFeature(icon: "widget.small", title: "Home Screen Widgets", description: "Quick-start routines from your home screen")
+        ]
+    }
     private var updateListenerTask: Task<Void, Error>?
     
     init() {
@@ -168,6 +179,10 @@ class StoreKitManager: ObservableObject {
         !products.isEmpty && !purchaseInProgress
     }
     
+    func getProFeaturesText() -> String {
+        return proFeatures.map { "• \($0.title): \($0.description)" }.joined(separator: "\n")
+    }
+    
     // MARK: - Development/Testing
     
     #if DEBUG
@@ -181,6 +196,15 @@ class StoreKitManager: ObservableObject {
         UserDefaults.standard.set(false, forKey: "isPro")
     }
     #endif
+}
+
+// MARK: - Pro Feature Model
+
+struct ProFeature: Identifiable {
+    let id = UUID()
+    let icon: String
+    let title: String
+    let description: String
 }
 
 // MARK: - StoreKit Configuration (for testing)

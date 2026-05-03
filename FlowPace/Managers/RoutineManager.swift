@@ -13,6 +13,9 @@ class RoutineManager: ObservableObject {
     // Reference to StoreKitManager to check premium status
     weak var storeKitManager: StoreKitManager?
     
+    // Reference to CloudKitManager for Pro sync feature
+    weak var cloudKitManager: CloudKitManager?
+    
     // Free version limit
     private let freeRoutineLimit = 3
     
@@ -50,6 +53,11 @@ class RoutineManager: ObservableObject {
         
         routines.append(routine)
         saveRoutines()
+        
+        // Sync to iCloud if Pro user
+        if storeKitManager?.isPro == true {
+            cloudKitManager?.syncRoutines(routines) { _ in }
+        }
     }
     
     func canAddRoutine() -> Bool {
@@ -70,12 +78,23 @@ class RoutineManager: ObservableObject {
         if let index = routines.firstIndex(where: { $0.id == routine.id }) {
             routines[index] = routine
             saveRoutines()
+            
+            // Sync to iCloud if Pro user
+            if storeKitManager?.isPro == true {
+                cloudKitManager?.syncRoutines(routines) { _ in }
+            }
         }
     }
     
     func deleteRoutine(_ routine: Routine) {
         routines.removeAll { $0.id == routine.id }
         saveRoutines()
+        
+        // Sync to iCloud if Pro user
+        if storeKitManager?.isPro == true {
+            cloudKitManager?.deleteRoutine(routine.id) { _ in }
+            cloudKitManager?.syncRoutines(routines) { _ in }
+        }
     }
     
     func deleteRoutines(at offsets: IndexSet) {

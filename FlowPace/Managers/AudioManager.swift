@@ -15,8 +15,7 @@ class AudioManager: ObservableObject {
     
     private let userDefaults = UserDefaults.standard
     
-    // Reference to StoreKitManager to check premium status
-    weak var storeKitManager: StoreKitManager?
+
     
     init() {
         loadSettings()
@@ -104,15 +103,11 @@ class AudioManager: ObservableObject {
     ]
     
     func setSoundPack(_ id: String) {
-        // Only premium users can switch packs
-        guard storeKitManager?.isPro == true else { return }
         selectedSoundPackId = id
         saveSettings()
     }
     
     private func playPackSound(named name: String) -> Bool {
-        // Only use packs for premium users; free falls back to system
-        guard storeKitManager?.isPro == true else { return false }
         guard let pack = builtInPacks.first(where: { $0.id == selectedSoundPackId }) else { return false }
         
         // Try common extensions in order
@@ -367,12 +362,6 @@ class AudioManager: ObservableObject {
     }
 
     func setVoiceIdentifier(_ identifier: String?) {
-        // Only premium users can select voices
-        guard storeKitManager?.isPro == true else {
-            selectedVoiceIdentifier = nil
-            saveSettings()
-            return
-        }
         selectedVoiceIdentifier = identifier
         saveSettings()
     }
@@ -392,25 +381,11 @@ class AudioManager: ObservableObject {
     }
     
     func toggleVoice() {
-        // Only allow voice toggle if user is premium
-        guard storeKitManager?.isPro == true else {
-            isVoiceEnabled = false
-            saveSettings()
-            return
-        }
-        
         isVoiceEnabled.toggle()
         saveSettings()
     }
     
-    // Method to check and enforce premium restrictions
-    func checkPremiumStatus() {
-        // If user is not premium, disable voice cues
-        if storeKitManager?.isPro != true {
-            isVoiceEnabled = false
-            saveSettings()
-        }
-    }
+
     
     func setVolume(_ newVolume: Float) {
         volume = max(0.0, min(1.0, newVolume))
@@ -435,9 +410,6 @@ class AudioManager: ObservableObject {
             volume = 0.7
         }
         // If no voice selected, leave nil to use system default (en-US)
-        
-        // Check premium status after loading settings
-        checkPremiumStatus()
     }
     
     private func saveSettings() {
