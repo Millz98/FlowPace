@@ -9,6 +9,7 @@ class RoutineManager: ObservableObject {
     private let userDefaults = UserDefaults.standard
     private let routinesKey = "savedRoutines"
     private let completedRoutinesKey = "completedRoutines"
+    private let freeRoutineLimit = 3
     
     // Reference to StoreKitManager to check premium status
     weak var storeKitManager: StoreKitManager?

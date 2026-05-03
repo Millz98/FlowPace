@@ -4,6 +4,7 @@ struct RoutineListView: View {
     @EnvironmentObject var routineManager: RoutineManager
     @EnvironmentObject var storeKitManager: StoreKitManager
     @EnvironmentObject var audioManager: AudioManager
+    @EnvironmentObject var cloudKitManager: CloudKitManager
     @EnvironmentObject var backgroundColorManager: BackgroundColorManager
 
     @State private var showingCreateRoutine = false
@@ -314,6 +315,8 @@ struct RoutineListView: View {
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
                     .environmentObject(storeKitManager)
+                    .environmentObject(audioManager)
+                    .environmentObject(cloudKitManager)
                     .environmentObject(backgroundColorManager)
             }
             .sheet(isPresented: $showingAnalytics) {
@@ -633,11 +636,6 @@ struct RoutineDetailView: View {
                 .environmentObject(routineManager)
                 .environmentObject(backgroundColorManager)
         }
-        .sheet(isPresented: $showingAnalytics) {
-            AnalyticsView()
-                .environmentObject(routineManager)
-                .environmentObject(storeKitManager)
-        }
     }
     
     private func itemColor(_ item: RoutineItem) -> StepColor {
@@ -666,5 +664,6 @@ struct RoutineDetailView: View {
         .environmentObject(RoutineManager())
         .environmentObject(StoreKitManager())
         .environmentObject(AudioManager())
+        .environmentObject(CloudKitManager())
         .environmentObject(BackgroundColorManager())
 }

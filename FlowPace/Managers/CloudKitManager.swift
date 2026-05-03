@@ -19,7 +19,7 @@ class CloudKitManager: ObservableObject {
     
     init() {
         container = CKContainer.default()
-        privateDatabase = container.privateDatabase
+        privateDatabase = container.privateCloudDatabase
         checkCloudAvailability()
     }
     
@@ -128,7 +128,11 @@ class CloudKitManager: ObservableObject {
         
         privateDatabase.fetch(withQuery: query, inZoneWith: routineZoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults) { [weak self] result in
             switch result {
-            case .success(let (records, _)):
+            case .success(let (matchResults, _)):
+                let records: [CKRecord] = matchResults.compactMap { _, recordResult in
+                    if case .success(let record) = recordResult { return record }
+                    return nil
+                }
                 let routines = self?.parseRoutines(from: records) ?? []
                 completion(.success(routines))
             case .failure(let error):

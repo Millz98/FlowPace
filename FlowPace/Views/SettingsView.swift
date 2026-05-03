@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var storeKitManager: StoreKitManager
     @EnvironmentObject var audioManager: AudioManager
+    @EnvironmentObject var cloudKitManager: CloudKitManager
     @EnvironmentObject var backgroundColorManager: BackgroundColorManager
 
     @Environment(\.dismiss) private var dismiss
@@ -800,5 +801,6 @@ struct SupportLink: View {
     SettingsView()
         .environmentObject(StoreKitManager())
         .environmentObject(AudioManager())
+        .environmentObject(CloudKitManager())
         .environmentObject(BackgroundColorManager())
 }

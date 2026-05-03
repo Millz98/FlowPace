@@ -12,6 +12,7 @@
 		0DC84AB22E65A00600D7BB69 /* ContactSupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */; };
 		0DC84AB62E65A10200D7BB69 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */; };
 		0DC84AB82E6647A700D7BB69 /* BackgroundColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC84AB72E6647A700D7BB69 /* BackgroundColorManager.swift */; };
+		A1234567890123456789071 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789070 /* CloudKitManager.swift */; };
 		A1234567890123456789012 /* FlowPaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789013 /* FlowPaceApp.swift */; };
 		A1234567890123456789014 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789015 /* ContentView.swift */; };
 		A1234567890123456789016 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890123456789017 /* Assets.xcassets */; };
@@ -33,32 +34,33 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0D63D3532E652A27006BBE0C /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/PrivacyPolicyView.swift"; sourceTree = "<group>"; };
-		0D63D3552E652A33006BBE0C /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TermsOfServiceView.swift"; sourceTree = "<group>"; };
-		0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ContactSupportView.swift"; sourceTree = "<group>"; };
-		0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/AnalyticsView.swift"; sourceTree = "<group>"; };
-		0DC84AB72E6647A700D7BB69 /* BackgroundColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/BackgroundColorManager.swift"; sourceTree = "<group>"; };
+		0D63D3532E652A27006BBE0C /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
+		0D63D3552E652A33006BBE0C /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
+		0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSupportView.swift; sourceTree = "<group>"; };
+		0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		0DC84AB72E6647A700D7BB69 /* BackgroundColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundColorManager.swift; sourceTree = "<group>"; };
+		A1234567890123456789070 /* CloudKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitManager.swift; sourceTree = "<group>"; };
 		A1234567890123456789013 /* FlowPaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FlowPaceApp.swift"; sourceTree = "<group>"; };
 		A1234567890123456789015 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView.swift"; sourceTree = "<group>"; };
 		A1234567890123456789017 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1234567890123456789019 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		A1234567890123456789021 /* RoutineListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/RoutineListView.swift"; sourceTree = "<group>"; };
-		A1234567890123456789023 /* RoutineEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/RoutineEditorView.swift"; sourceTree = "<group>"; };
-		A1234567890123456789025 /* ActiveTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ActiveTimerView.swift"; sourceTree = "<group>"; };
-		A1234567890123456789027 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Models.swift"; sourceTree = "<group>"; };
-		A1234567890123456789029 /* RoutineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/RoutineManager.swift"; sourceTree = "<group>"; };
-		A1234567890123456789031 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/TimerManager.swift"; sourceTree = "<group>"; };
-		A1234567890123456789033 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/AudioManager.swift"; sourceTree = "<group>"; };
-		A1234567890123456789035 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/HapticManager.swift"; sourceTree = "<group>"; };
-		A1234567890123456789037 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/StoreKitManager.swift"; sourceTree = "<group>"; };
+		A1234567890123456789021 /* RoutineListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineListView.swift; sourceTree = "<group>"; };
+		A1234567890123456789023 /* RoutineEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineEditorView.swift; sourceTree = "<group>"; };
+		A1234567890123456789025 /* ActiveTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveTimerView.swift; sourceTree = "<group>"; };
+		A1234567890123456789027 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		A1234567890123456789029 /* RoutineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineManager.swift; sourceTree = "<group>"; };
+		A1234567890123456789031 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
+		A1234567890123456789033 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		A1234567890123456789035 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		A1234567890123456789037 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		A1234567890123456789038 /* FlowPace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FlowPace.entitlements; sourceTree = "<group>"; };
 		A1234567890123456789039 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1234567890123456789040 /* FlowPace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlowPace.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1234567890123456789060 /* AddStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/AddStepView.swift"; sourceTree = "<group>"; };
-		A1234567890123456789061 /* AddGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/AddGroupView.swift"; sourceTree = "<group>"; };
-		A1234567890123456789062 /* EditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/EditItemView.swift"; sourceTree = "<group>"; };
-		A1234567890123456789063 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SettingsView.swift"; sourceTree = "<group>"; };
-		A1234567890123456789068 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SplashScreenView.swift"; sourceTree = "<group>"; };
+		A1234567890123456789060 /* AddStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddStepView.swift; sourceTree = "<group>"; };
+		A1234567890123456789061 /* AddGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGroupView.swift; sourceTree = "<group>"; };
+		A1234567890123456789062 /* EditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItemView.swift; sourceTree = "<group>"; };
+		A1234567890123456789063 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A1234567890123456789068 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +93,40 @@
 		A1234567890123456789043 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-			0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */,
+				0DC84AB52E65A10200D7BB69 /* AnalyticsView.swift */,
+				0D63D3532E652A27006BBE0C /* PrivacyPolicyView.swift */,
+				0D63D3552E652A33006BBE0C /* TermsOfServiceView.swift */,
+				0DC84AB12E65A00600D7BB69 /* ContactSupportView.swift */,
+				A1234567890123456789021 /* RoutineListView.swift */,
+				A1234567890123456789023 /* RoutineEditorView.swift */,
+				A1234567890123456789025 /* ActiveTimerView.swift */,
+				A1234567890123456789060 /* AddStepView.swift */,
+				A1234567890123456789061 /* AddGroupView.swift */,
+				A1234567890123456789062 /* EditItemView.swift */,
+				A1234567890123456789063 /* SettingsView.swift */,
+				A1234567890123456789068 /* SplashScreenView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A1234567890123456789044 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A1234567890123456789027 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A1234567890123456789045 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				0DC84AB72E6647A700D7BB69 /* BackgroundColorManager.swift */,
+				A1234567890123456789029 /* RoutineManager.swift */,
+				A1234567890123456789031 /* TimerManager.swift */,
+				A1234567890123456789033 /* AudioManager.swift */,
+				A1234567890123456789035 /* HapticManager.swift */,
+				A1234567890123456789037 /* StoreKitManager.swift */,
+				A1234567890123456789070 /* CloudKitManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -202,6 +237,7 @@
 				A1234567890123456789034 /* HapticManager.swift in Sources */,
 				A1234567890123456789036 /* StoreKitManager.swift in Sources */,
 				0DC84AB82E6647A700D7BB69 /* BackgroundColorManager.swift in Sources */,
+				A1234567890123456789071 /* CloudKitManager.swift in Sources */,
 				A1234567890123456789064 /* AddStepView.swift in Sources */,
 				A1234567890123456789065 /* AddGroupView.swift in Sources */,
 				A1234567890123456789066 /* EditItemView.swift in Sources */,
