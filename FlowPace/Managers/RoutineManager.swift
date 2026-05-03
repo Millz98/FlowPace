@@ -3,9 +3,18 @@ import SwiftUI
 
 @MainActor
 class RoutineManager: ObservableObject {
+    @Published var routines: [Routine] = []
+    @Published var completedRoutines: [CompletedRoutine] = []
     
-    // Free version limit
-    private let freeRoutineLimit = 3
+    private let userDefaults = UserDefaults.standard
+    private let routinesKey = "savedRoutines"
+    private let completedRoutinesKey = "completedRoutines"
+    
+    // Reference to StoreKitManager to check premium status
+    weak var storeKitManager: StoreKitManager?
+    
+    // Reference to CloudKitManager for Pro sync feature
+    weak var cloudKitManager: CloudKitManager?
     
     init() {
         loadRoutines()

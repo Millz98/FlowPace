@@ -1,14 +1,8 @@
 import Foundation
 import CloudKit
 
-// Protocol to define the interface used by RoutineManager
-protocol CloudKitManaging: AnyObject {
-    func syncRoutines(_ routines: [Routine], completion: @escaping (Result<[Routine], Error>) -> Void)
-    func deleteRoutine(_ id: UUID, completion: @escaping (Result<Void, Error>) -> Void)
-}
-
 @MainActor
-class CloudKitManager: ObservableObject, CloudKitManaging {
+class CloudKitManager: ObservableObject {
     @Published var isSyncing = false
     @Published var lastSyncDate: Date?
     @Published var syncError: String?
