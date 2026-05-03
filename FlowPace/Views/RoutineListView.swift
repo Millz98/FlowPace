@@ -8,7 +8,7 @@ struct RoutineListView: View {
 
     @State private var showingCreateRoutine = false
     @State private var showingSettings = false
-    @State private var showingStats = false
+    @State private var showingAnalytics = false
     
     var body: some View {
         ZStack {
@@ -32,8 +32,8 @@ struct RoutineListView: View {
                         
                         // Stats and settings with liquid glass
                         HStack(spacing: 12) {
-                            // Stats button
-                            Button(action: { showingStats = true }) {
+                            // Analytics button
+                             Button(action: { showingAnalytics = true }) {
                                 Image(systemName: "chart.bar.fill")
                                     .font(.title2)
                                     .foregroundColor(.white)
@@ -316,10 +316,10 @@ struct RoutineListView: View {
                     .environmentObject(storeKitManager)
                     .environmentObject(backgroundColorManager)
             }
-            .sheet(isPresented: $showingStats) {
-                StatsView()
+            .sheet(isPresented: $showingAnalytics) {
+                AnalyticsView()
                     .environmentObject(routineManager)
-                    .environmentObject(backgroundColorManager)
+                    .environmentObject(storeKitManager)
             }
     }
     
@@ -632,6 +632,11 @@ struct RoutineDetailView: View {
             RoutineEditorView(routine: routine)
                 .environmentObject(routineManager)
                 .environmentObject(backgroundColorManager)
+        }
+        .sheet(isPresented: $showingAnalytics) {
+            AnalyticsView()
+                .environmentObject(routineManager)
+                .environmentObject(storeKitManager)
         }
     }
     

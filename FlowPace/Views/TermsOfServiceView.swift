@@ -92,25 +92,26 @@ struct TermsOfServiceView: View {
                         }
                         
                         // Pro Features
-                        PolicySection(title: "Pro Features") {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("FlowPace offers premium features:")
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                                
-                                VStack(alignment: .leading, spacing: 8) {
-                                    PolicyBulletPoint(text: "Unlimited routine creation and storage")
-                                    PolicyBulletPoint(text: "Premium sound packs and voice cues")
-                                    PolicyBulletPoint(text: "Advanced customization options")
-                                    PolicyBulletPoint(text: "Priority customer support")
-                                }
-                                
-                                Text("Pro features require a valid subscription through the App Store.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .padding(.top, 8)
-                            }
-                        }
+                         PolicySection(title: "Pro Features") {
+                             VStack(alignment: .leading, spacing: 12) {
+                                 Text("FlowPace Pro offers premium features:")
+                                     .font(.body)
+                                     .foregroundColor(.primary)
+                                 
+                                 VStack(alignment: .leading, spacing: 8) {
+                                     PolicyBulletPoint(text: "iCloud Sync - Sync routines across all your Apple devices")
+                                     PolicyBulletPoint(text: "Advanced Analytics - Track streaks, trends, and export data")
+                                     PolicyBulletPoint(text: "Unlimited Routines - Create as many routines as you need")
+                                     PolicyBulletPoint(text: "Home Screen Widgets - Quick-start routines from your home screen")
+                                     PolicyBulletPoint(text: "All sound packs and voice cues included")
+                                 }
+                                 
+                                 Text("Pro features require a valid subscription through the App Store.")
+                                     .font(.caption)
+                                     .foregroundColor(.secondary)
+                                     .padding(.top, 8)
+                             }
+                         }
                         
                         // Payment Terms
                         PolicySection(title: "Payment Terms") {

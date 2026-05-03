@@ -64,149 +64,181 @@ struct SettingsView: View {
                 // Settings content
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 20) {
-                        // Pro Status Section
-                        SettingsCard(title: "Subscription") {
-                            VStack(spacing: 20) {
-                                // Status Header
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(storeKitManager.isPro ? "Pro Active" : "Free Plan")
-                                            .font(.title2)
-                                            .fontWeight(.bold)
-                                            .foregroundColor(.white)
-                                        
-                                        Text(storeKitManager.isPro ? "All features unlocked" : "Limited to 3 routines")
-                                            .font(.subheadline)
-                                            .foregroundColor(.white.opacity(0.8))
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    if storeKitManager.isPro {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
-                                            .font(.title)
-                                    }
-                                }
-                                
-                                if !storeKitManager.isPro {
-                                    // Professional Upgrade Section
-                                    VStack(spacing: 16) {
-                                        // Primary CTA - One-time purchase
-                                        Button(action: {
-                                            Task {
-                                                await storeKitManager.purchasePro(productId: "com.flowpace.pro.onetime")
-                                            }
-                                        }) {
-                                            VStack(spacing: 4) {
-                                                Text("Upgrade to Pro")
-                                                    .font(.headline)
-                                                    .fontWeight(.semibold)
-                                                Text("\(storeKitManager.getProPrice(productId: "com.flowpace.pro.onetime") ?? "$9.99 CAD") • One-time purchase")
-                                                    .font(.caption)
-                                                    .opacity(0.9)
-                                            }
-                                            .foregroundColor(.white)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 16)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 16)
-                                                    .fill(
-                                                        LinearGradient(
-                                                            gradient: Gradient(colors: [Color.blue, Color.purple]),
-                                                            startPoint: .leading,
-                                                            endPoint: .trailing
-                                                        )
-                                                    )
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 16)
-                                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                                    )
-                                            )
-                                            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
-                                        }
-                                        
-                                        // Subscription options
-                                        VStack(spacing: 8) {
-                                            Text("Or choose a subscription:")
-                                                .font(.caption)
-                                                .foregroundColor(.white.opacity(0.7))
-                                            
-                                            HStack(spacing: 12) {
-                                                Button(action: {
-                                                    Task {
-                                                        await storeKitManager.purchasePro(productId: "com.flowpace.pro.monthly")
-                                                    }
-                                                }) {
-                                                    VStack(spacing: 2) {
-                                                        Text("Monthly")
-                                                            .font(.subheadline)
-                                                            .fontWeight(.medium)
-                                                        Text(storeKitManager.getProPrice(productId: "com.flowpace.pro.monthly") ?? "$1.99")
-                                                            .font(.caption)
-                                                    }
-                                                    .foregroundColor(.white)
-                                                    .frame(maxWidth: .infinity)
-                                                    .padding(.vertical, 12)
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .fill(.ultraThinMaterial)
-                                                            .opacity(0.4)
-                                                            .overlay(
-                                                                RoundedRectangle(cornerRadius: 12)
-                                                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                                            )
-                                                    )
-                                                    .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
-                                                }
-                                                
-                                                Button(action: {
-                                                    Task {
-                                                        await storeKitManager.purchasePro(productId: "com.flowpace.pro.yearly")
-                                                    }
-                                                }) {
-                                                    VStack(spacing: 2) {
-                                                        Text("Yearly")
-                                                            .font(.subheadline)
-                                                            .fontWeight(.medium)
-                                                        Text(storeKitManager.getProPrice(productId: "com.flowpace.pro.yearly") ?? "$7.99")
-                                                            .font(.caption)
-                                                    }
-                                                    .foregroundColor(.white)
-                                                    .frame(maxWidth: .infinity)
-                                                    .padding(.vertical, 12)
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .fill(.ultraThinMaterial)
-                                                            .opacity(0.4)
-                                                            .overlay(
-                                                                RoundedRectangle(cornerRadius: 12)
-                                                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                                            )
-                                                    )
-                                                    .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
-                                                }
-                                            }
-                                        }
-                                        
-                                        // Features list
-                                        VStack(alignment: .leading, spacing: 12) {
-                                            Text("Pro includes:")
-                                                .font(.subheadline)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.white)
-                                            
-                                            VStack(alignment: .leading, spacing: 8) {
-                                                ProFeatureRow(icon: "infinity", title: "Unlimited Routines", description: "Create as many routines as you need")
-                                                ProFeatureRow(icon: "speaker.wave.3", title: "Premium Sound Packs", description: "Professional audio themes")
-                                                ProFeatureRow(icon: "person.wave.2", title: "Voice Cues", description: "Audio guidance during workouts")
-                                            }
-                                        }
-                                        .padding(.top, 8)
-                                    }
-                                }
-                            }
-                        }
+                            // Pro Status Section
+                         SettingsCard(title: "Subscription") {
+                             VStack(spacing: 20) {
+                                 // Status Header
+                                 HStack {
+                                     VStack(alignment: .leading, spacing: 6) {
+                                         Text(storeKitManager.isPro ? "Pro Active" : "Free Plan")
+                                             .font(.title2)
+                                             .fontWeight(.bold)
+                                             .foregroundColor(.white)
+                                         
+                                         Text(storeKitManager.isPro ? "All Pro features unlocked" : "Upgrade for premium features")
+                                             .font(.subheadline)
+                                             .foregroundColor(.white.opacity(0.8))
+                                     }
+                                     
+                                     Spacer()
+                                     
+                                     if storeKitManager.isPro {
+                                         Image(systemName: "checkmark.circle.fill")
+                                             .foregroundColor(.green)
+                                             .font(.title)
+                                     }
+                                 }
+                                 
+                                 if !storeKitManager.isPro {
+                                     // Professional Upgrade Section
+                                     VStack(spacing: 16) {
+                                         // Primary CTA - One-time purchase
+                                         Button(action: {
+                                             Task {
+                                                 await storeKitManager.purchasePro(productId: "com.flowpace.pro.onetime")
+                                             }
+                                         }) {
+                                             VStack(spacing: 4) {
+                                                 Text("Upgrade to Pro")
+                                                     .font(.headline)
+                                                     .fontWeight(.semibold)
+                                                 Text("\(storeKitManager.getProPrice(productId: "com.flowpace.pro.onetime") ?? "$9.99 CAD") • One-time purchase")
+                                                     .font(.caption)
+                                                     .opacity(0.9)
+                                             }
+                                             .foregroundColor(.white)
+                                             .frame(maxWidth: .infinity)
+                                             .padding(.vertical, 16)
+                                             .background(
+                                                 RoundedRectangle(cornerRadius: 16)
+                                                     .fill(
+                                                         LinearGradient(
+                                                             gradient: Gradient(colors: [Color.blue, Color.purple]),
+                                                             startPoint: .leading,
+                                                             endPoint: .trailing
+                                                         )
+                                                     )
+                                                     .overlay(
+                                                         RoundedRectangle(cornerRadius: 16)
+                                                             .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                                     )
+                                             )
+                                             .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                                         }
+                                         
+                                         // Subscription options
+                                         VStack(spacing: 8) {
+                                             Text("Or choose a subscription:")
+                                                 .font(.caption)
+                                                 .foregroundColor(.white.opacity(0.7))
+                                             
+                                             HStack(spacing: 12) {
+                                                 Button(action: {
+                                                     Task {
+                                                         await storeKitManager.purchasePro(productId: "com.flowpace.pro.monthly")
+                                                     }
+                                                 }) {
+                                                     VStack(spacing: 2) {
+                                                         Text("Monthly")
+                                                             .font(.subheadline)
+                                                             .fontWeight(.medium)
+                                                         Text(storeKitManager.getProPrice(productId: "com.flowpace.pro.monthly") ?? "$1.99")
+                                                             .font(.caption)
+                                                     }
+                                                     .foregroundColor(.white)
+                                                     .frame(maxWidth: .infinity)
+                                                     .padding(.vertical, 12)
+                                                     .background(
+                                                         RoundedRectangle(cornerRadius: 12)
+                                                             .fill(.ultraThinMaterial)
+                                                             .opacity(0.4)
+                                                             .overlay(
+                                                                 RoundedRectangle(cornerRadius: 12)
+                                                                     .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                                             )
+                                                     )
+                                                     .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+                                                 }
+                                                 
+                                                 Button(action: {
+                                                     Task {
+                                                         await storeKitManager.purchasePro(productId: "com.flowpace.pro.yearly")
+                                                     }
+                                                 }) {
+                                                     VStack(spacing: 2) {
+                                                         Text("Yearly")
+                                                             .font(.subheadline)
+                                                             .fontWeight(.medium)
+                                                         Text(storeKitManager.getProPrice(productId: "com.flowpace.pro.yearly") ?? "$7.99")
+                                                             .font(.caption)
+                                                     }
+                                                     .foregroundColor(.white)
+                                                     .frame(maxWidth: .infinity)
+                                                     .padding(.vertical, 12)
+                                                     .background(
+                                                         RoundedRectangle(cornerRadius: 12)
+                                                             .fill(.ultraThinMaterial)
+                                                             .opacity(0.4)
+                                                             .overlay(
+                                                                 RoundedRectangle(cornerRadius: 12)
+                                                                     .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                                             )
+                                                     )
+                                                     .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+                                                 }
+                                             }
+                                         }
+                                         
+                                         // Features list
+                                         VStack(alignment: .leading, spacing: 12) {
+                                             Text("Pro includes:")
+                                                 .font(.subheadline)
+                                                 .fontWeight(.medium)
+                                                 .foregroundColor(.white)
+                                             
+                                             VStack(alignment: .leading, spacing: 8) {
+                                                 ForEach(storeKitManager.proFeatures) { feature in
+                                                     ProFeatureRow(icon: feature.icon, title: feature.title, description: feature.description)
+                                                 }
+                                             }
+                                         }
+                                         .padding(.top, 8)
+                                     }
+                                 } else {
+                                     // Show iCloud sync status if Pro
+                                     VStack(alignment: .leading, spacing: 12) {
+                                         HStack {
+                                             Image(systemName: "icloud.fill")
+                                                 .foregroundColor(.blue)
+                                             Text("iCloud Sync")
+                                                 .font(.subheadline)
+                                                 .fontWeight(.medium)
+                                             Spacer()
+                                             if cloudKitManager.isSyncing {
+                                                 ProgressView()
+                                                     .scaleEffect(0.7)
+                                             } else if cloudKitManager.isCloudAvailable {
+                                                 Image(systemName: "checkmark.circle.fill")
+                                                     .foregroundColor(.green)
+                                             }
+                                         }
+                                         
+                                         if let lastSync = cloudKitManager.lastSyncDate {
+                                             Text("Last sync: \(lastSync, style: .relative) ago")
+                                                 .font(.caption)
+                                                 .foregroundColor(.secondary)
+                                         }
+                                         
+                                         if let error = cloudKitManager.syncError {
+                                             Text(error)
+                                                 .font(.caption)
+                                                 .foregroundColor(.red)
+                                         }
+                                     }
+                                     .padding(.top, 8)
+                                 }
+                             }
+                         }
                         
                         // Appearance Settings Section
                         SettingsCard(title: "Appearance") {
