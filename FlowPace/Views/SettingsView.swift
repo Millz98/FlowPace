@@ -290,130 +290,19 @@ struct SettingsView: View {
                                     .toggleStyle(SwitchToggleStyle(tint: .blue))
                                 
                                 if audioManager.isAudioEnabled {
-                                    Toggle("Voice Cues", isOn: $audioManager.isVoiceEnabled)
-                                        .toggleStyle(SwitchToggleStyle(tint: .blue))
-                                    
-                                    if audioManager.isVoiceEnabled {
-                                        VStack(spacing: 12) {
-                                            HStack {
-                                                Text("Volume")
-                                                    .font(.subheadline)
-                                                    .fontWeight(.medium)
-                                                Spacer()
-                                                Text("\(Int(audioManager.volume * 100))%")
-                                                    .font(.caption)
-                                                    .foregroundColor(.secondary)
-                                            }
-                                            
-                                            Slider(value: $audioManager.volume, in: 0...1, step: 0.1)
-                                                .accentColor(.blue)
-
-                                            VStack(alignment: .leading, spacing: 12) {
-                                                    Text("Sound Pack")
-                                                        .font(.subheadline)
-                                                        .fontWeight(.medium)
-                                                        .foregroundColor(.white)
-                                                    
-                                                    // Productivity Packs
-                                                    VStack(alignment: .leading, spacing: 8) {
-                                                        Text("Productivity & Focus")
-                                                            .font(.caption)
-                                                            .fontWeight(.semibold)
-                                                            .foregroundColor(.white.opacity(0.7))
-                                                            .padding(.horizontal, 8)
-                                                            .padding(.vertical, 4)
-                                                            .background(
-                                                                Capsule()
-                                                                    .fill(.ultraThinMaterial)
-                                                                    .opacity(0.3)
-                                                            )
-                                                        
-                                                        ForEach(audioManager.builtInPacks.filter { $0.category == "Productivity" }, id: \.id) { pack in
-                                                            SoundPackRow(pack: pack, isSelected: audioManager.selectedSoundPackId == pack.id, audioManager: audioManager) {
-                                                                audioManager.setSoundPack(pack.id)
-                                                            }
-                                                        }
-                                                    }
-                                                    
-                                                    // Fitness Packs
-                                                    VStack(alignment: .leading, spacing: 8) {
-                                                        Text("Fitness & Wellness")
-                                                            .font(.caption)
-                                                            .fontWeight(.semibold)
-                                                            .foregroundColor(.white.opacity(0.7))
-                                                            .padding(.horizontal, 8)
-                                                            .padding(.vertical, 4)
-                                                            .background(
-                                                                Capsule()
-                                                                    .fill(.ultraThinMaterial)
-                                                                    .opacity(0.3)
-                                                            )
-                                                        
-                                                        ForEach(audioManager.builtInPacks.filter { $0.category == "Fitness" }, id: \.id) { pack in
-                                                            SoundPackRow(pack: pack, isSelected: audioManager.selectedSoundPackId == pack.id, audioManager: audioManager) {
-                                                                audioManager.setSoundPack(pack.id)
-                                                            }
-                                                        }
-                                                    }
-                                                    
-                                                    // Classic Packs
-                                                    VStack(alignment: .leading, spacing: 8) {
-                                                        Text("Classic")
-                                                            .font(.caption)
-                                                            .fontWeight(.semibold)
-                                                            .foregroundColor(.white.opacity(0.7))
-                                                            .padding(.horizontal, 8)
-                                                            .padding(.vertical, 4)
-                                                            .background(
-                                                                Capsule()
-                                                                    .fill(.ultraThinMaterial)
-                                                                    .opacity(0.3)
-                                                            )
-                                                        
-                                                        ForEach(audioManager.builtInPacks.filter { $0.category == "Classic" }, id: \.id) { pack in
-                                                            SoundPackRow(pack: pack, isSelected: audioManager.selectedSoundPackId == pack.id, audioManager: audioManager) {
-                                                                audioManager.setSoundPack(pack.id)
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                .padding(.leading, 8)
-
-                                                VStack(alignment: .leading, spacing: 8) {
-                                                    Text("Voice")
-                                                        .font(.subheadline)
-                                                        .fontWeight(.medium)
-                                                    let voices = audioManager.getAvailableVoices(languagePrefix: "en")
-                                                    Picker("Voice", selection: Binding<String>(
-                                                        get: { audioManager.selectedVoiceIdentifier ?? "" },
-                                                        set: { audioManager.setVoiceIdentifier($0.isEmpty ? nil : $0) }
-                                                    )) {
-                                                        Text("System Default")
-                                                            .tag("")
-                                                        ForEach(voices, id: \.identifier) { voice in
-                                                            Text("\(voice.name) (\(voice.language))")
-                                                                .tag(voice.identifier)
-                                                        }
-                                                    }
-                                                    .pickerStyle(MenuPickerStyle())
-                                                    
-                                                    HStack {
-                                                        Spacer()
-                                                        Button(action: { audioManager.speakPreview() }) {
-                                                            HStack(spacing: 8) {
-                                                                Image(systemName: "play.circle.fill")
-                                                                Text("Preview Voice")
-                                                            }
-                                                            .foregroundColor(.white)
-                                                            .padding(.vertical, 8)
-                                                            .padding(.horizontal, 12)
-                                                            .background(Color.white.opacity(0.15))
-                                                            .cornerRadius(10)
-                                                        }
-                                                    }
-                                                }
+                                    VStack(spacing: 12) {
+                                        HStack {
+                                            Text("Volume")
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                            Spacer()
+                                            Text("\(Int(audioManager.volume * 100))%")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
                                         }
-                                        .padding(.leading, 8)
+                                        
+                                        Slider(value: $audioManager.volume, in: 0...1, step: 0.1)
+                                            .accentColor(.blue)
                                     }
                                 }
                             }
@@ -663,65 +552,6 @@ struct ProFeatureRow: View {
             
             Spacer()
         }
-    }
-}
-
-struct SoundPackRow: View {
-    let pack: AudioManager.SoundPack
-    let isSelected: Bool
-    let audioManager: AudioManager
-    let onTap: () -> Void
-    
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 12) {
-                Text(pack.emoji)
-                    .font(.title2)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(pack.displayName)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.white)
-                    
-                    Text(pack.description)
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.7))
-                }
-                
-                Spacer()
-                
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.blue)
-                        .font(.title3)
-                } else {
-                    Button("Preview") {
-                        audioManager.playPreviewSound(for: pack.id)
-                    }
-                    .font(.caption)
-                    .foregroundColor(.blue)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(.ultraThinMaterial)
-                            .opacity(0.3)
-                    )
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? Color.blue.opacity(0.2) : Color.clear)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(isSelected ? Color.blue.opacity(0.5) : Color.white.opacity(0.1), lineWidth: 1)
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 

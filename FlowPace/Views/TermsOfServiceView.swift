@@ -102,8 +102,8 @@ struct TermsOfServiceView: View {
                                      PolicyBulletPoint(text: "iCloud Sync - Sync routines across all your Apple devices")
                                      PolicyBulletPoint(text: "Advanced Analytics - Track streaks, trends, and export data")
                                      PolicyBulletPoint(text: "Unlimited Routines - Create as many routines as you need")
-                                     PolicyBulletPoint(text: "Home Screen Widgets - Quick-start routines from your home screen")
-                                     PolicyBulletPoint(text: "All sound packs and voice cues included")
+                                    PolicyBulletPoint(text: "Home Screen Widgets - Quick-start routines from your home screen")
+                                    PolicyBulletPoint(text: "Routine Groups - Organize routines into custom groups")
                                  }
                                  
                                  Text("Pro features require a valid subscription through the App Store.")

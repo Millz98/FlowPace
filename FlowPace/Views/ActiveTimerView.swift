@@ -9,11 +9,6 @@ struct ActiveTimerView: View {
     @EnvironmentObject var backgroundColorManager: BackgroundColorManager
     @Environment(\.dismiss) private var dismiss
     
-    // Voice cue state to avoid repeated announcements per second/step
-    @State private var lastAnnouncedSecond: Int? = nil
-    @State private var didAnnounceStepComplete: Bool = false
-    @State private var currentStepDuration: TimeInterval = 0
-    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -529,9 +524,6 @@ struct ActiveTimerView: View {
                 handleStepChange(step)
             }
         }
-        .onChange(of: timerManager.timeRemaining) { _, timeRemaining in
-            handleCountdown(timeRemaining)
-        }
     }
     
     private var stepBackgroundColors: [Color] {
@@ -563,7 +555,6 @@ struct ActiveTimerView: View {
         case .completed:
             hapticManager.playCompletionHaptic()
             audioManager.playCompletionSound()
-            audioManager.speakProductivityRoutineComplete()
         default:
             break
         }
@@ -572,52 +563,6 @@ struct ActiveTimerView: View {
     private func handleStepChange(_ step: TimerStep) {
         hapticManager.playStepChangeHaptic()
         audioManager.playStepChangeSound()
-        
-        // Voice cue for step change
-        audioManager.speakStepName(step.step.name)
-        
-        // Reset voice cue state for the new step
-        lastAnnouncedSecond = nil
-        didAnnounceStepComplete = false
-        currentStepDuration = step.step.duration
-    }
-    
-    private func handleCountdown(_ timeRemaining: TimeInterval) {
-        let seconds = Int(ceil(timeRemaining))
-        
-        // Adaptive countdown for short steps:
-        // - For steps 4-5s: announce "2...1" (2 and 1)
-        // - For steps 3s or less: only announce "1" 
-        // - For steps 6s+: announce standard 3,2,1
-        if seconds > 0 {
-            if currentStepDuration <= 3 {
-                // Very short steps: only announce "1"
-                if seconds == 1 && lastAnnouncedSecond != seconds {
-                    lastAnnouncedSecond = seconds
-                    audioManager.speakCountdown(seconds)
-                }
-            } else if currentStepDuration <= 5 {
-                // Short steps: announce "2...1"
-                if (seconds == 2 || seconds == 1) && lastAnnouncedSecond != seconds {
-                    lastAnnouncedSecond = seconds
-                    audioManager.speakCountdown(seconds)
-                }
-            } else {
-                // Normal steps: announce "3,2,1"
-                if seconds <= 3 && lastAnnouncedSecond != seconds {
-                    lastAnnouncedSecond = seconds
-                    audioManager.speakCountdown(seconds)
-                }
-            }
-        }
-        
-        // Announce step completion when time reaches 0
-        if timeRemaining <= 0 && timerManager.isRunning {
-            if !didAnnounceStepComplete {
-                didAnnounceStepComplete = true
-                audioManager.speakStepComplete()
-            }
-        }
     }
 }
 

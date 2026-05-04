@@ -60,9 +60,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>FlowPace needs microphone access for voice cues and audio features.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>FlowPace needs camera access for scanning QR codes or barcodes.</string>
 </dict>
 </plist>

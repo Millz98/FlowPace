@@ -11,7 +11,7 @@ FlowPace lets users build timed sequences from steps and repeating groups, with 
 - **Routines** — Create, save, edit, delete, reorder, and duplicate timer routines
 - **Steps & groups** — Named steps with duration and color; groups with loop counts
 - **Active timer** — Large display, step-colored backgrounds, progress feedback
-- **Audio** — Enable/disable audio, volume, **sound packs** (productivity, fitness, classic themes), and **voice cues** with voice selection and preview (Settings → Audio)
+- **Audio** — System sounds for step changes and completion; toggle and volume preference in **Settings → Audio**
 - **Haptics** — Taptic feedback where supported
 - **Appearance** — Customizable background gradient themes
 - **Splash** — Branded launch experience before the main UI
@@ -30,6 +30,7 @@ FlowPace lets users build timed sequences from steps and repeating groups, with 
 - **Persistence** — `UserDefaults` for routines and preferences; optional **CloudKit** private database when Pro + iCloud available
 - **StoreKit 2** — Products, purchases, transaction listener on the main actor
 - **CloudKit** — Container `iCloud.com.flowpace.app` (must match Apple Developer + Xcode capability)
+- **Audio** — No `SoundPacks/` (or other) custom audio bundles in the project; `AudioManager` triggers system sounds only.
 
 Core timer and local data work **without a network**; **iCloud sync** requires network and an eligible Apple ID.
 
@@ -108,15 +109,11 @@ Configure the same IDs in **App Store Connect** (and StoreKit Configuration file
 - `com.flowpace.pro.monthly`
 - `com.flowpace.pro.yearly`
 
-### Info usage strings
-
-`Info.plist` includes usage descriptions for microphone and camera as declared by the project; adjust copy if you change features.
-
 ## Testing
 
 - Exercise **free tier** — routine limit (3), analytics / Pro gates where still applied
 - Exercise **Pro** — StoreKit testing configuration, purchases, restore, iCloud sync paths
-- **Audio** — Sound pack selection and voice cues with **audio enabled** and **voice cues** toggled on in Settings
+- **Audio** — With **audio enabled**, confirm step-change and completion **system** sounds during a timer run (no custom asset playback)
 
 ## Deployment checklist
 
