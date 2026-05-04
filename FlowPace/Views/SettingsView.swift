@@ -290,28 +290,8 @@ struct SettingsView: View {
                                     .toggleStyle(SwitchToggleStyle(tint: .blue))
                                 
                                 if audioManager.isAudioEnabled {
-                                    HStack {
-                                        Toggle("Voice Cues", isOn: $audioManager.isVoiceEnabled)
-                                            .disabled(!storeKitManager.isPro)
-                                            .toggleStyle(SwitchToggleStyle(tint: .blue))
-                                        
-                                        if !storeKitManager.isPro {
-                                            Text("PRO")
-                                                .font(.caption2)
-                                                .fontWeight(.bold)
-                                                .foregroundColor(.white)
-                                                .padding(.horizontal, 6)
-                                                .padding(.vertical, 2)
-                                                .background(
-                                                    Capsule()
-                                                        .fill(LinearGradient(
-                                                            gradient: Gradient(colors: [Color.blue, Color.purple]),
-                                                            startPoint: .leading,
-                                                            endPoint: .trailing
-                                                        ))
-                                                )
-                                        }
-                                    }
+                                    Toggle("Voice Cues", isOn: $audioManager.isVoiceEnabled)
+                                        .toggleStyle(SwitchToggleStyle(tint: .blue))
                                     
                                     if audioManager.isVoiceEnabled {
                                         VStack(spacing: 12) {
@@ -328,9 +308,7 @@ struct SettingsView: View {
                                             Slider(value: $audioManager.volume, in: 0...1, step: 0.1)
                                                 .accentColor(.blue)
 
-                                            // Premium-only Sound Pack selection
-                                            if storeKitManager.isPro {
-                                                VStack(alignment: .leading, spacing: 12) {
+                                            VStack(alignment: .leading, spacing: 12) {
                                                     Text("Sound Pack")
                                                         .font(.subheadline)
                                                         .fontWeight(.medium)
@@ -400,10 +378,7 @@ struct SettingsView: View {
                                                     }
                                                 }
                                                 .padding(.leading, 8)
-                                            }
 
-                                            // Premium-only voice selection
-                                            if storeKitManager.isPro {
                                                 VStack(alignment: .leading, spacing: 8) {
                                                     Text("Voice")
                                                         .font(.subheadline)
@@ -437,7 +412,6 @@ struct SettingsView: View {
                                                         }
                                                     }
                                                 }
-                                            }
                                         }
                                         .padding(.leading, 8)
                                     }

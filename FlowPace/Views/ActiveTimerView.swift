@@ -180,7 +180,7 @@ struct ActiveTimerView: View {
                                                     .font(.headline)
                                                     .foregroundColor(.white)
                                                 
-                                                Text("Unlock voice cues and unlimited routines with Pro!")
+                                                Text("Unlock unlimited routines and more with Pro!")
                                                     .font(.subheadline)
                                                     .foregroundColor(.white.opacity(0.9))
                                                     .multilineTextAlignment(.center)

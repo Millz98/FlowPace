@@ -1,208 +1,143 @@
 # FlowPace iOS App
 
-**The most flexible and polished interval timer on the App Store**
+**A flexible, polished interval timer for iPhone and iPad**
 
-FlowPace empowers users to build any timed sequence they can imagine, wrapped in a beautiful and intuitive iOS-native experience.
+FlowPace lets users build timed sequences from steps and repeating groups, with a SwiftUI interface tuned for focus sessions and workouts.
 
-## 🎯 Features
+## Features
 
-### Core Features
+### Core (all users)
 
-- **Create, Save, Edit, Delete Routines** - Full CRUD operations for custom timer routines
-- **Flexible Step System** - Add individual timed steps with custom names, durations, and colors
-- **Group Loops** - Create repeating groups of steps with customizable loop counts
-- **Drag & Drop Reordering** - Intuitive gesture-based editing with standard iOS list reordering
-- **High-Visibility Timer** - Large, clear display optimized for active workouts and activities
+- **Routines** — Create, save, edit, delete, reorder, and duplicate timer routines
+- **Steps & groups** — Named steps with duration and color; groups with loop counts
+- **Active timer** — Large display, step-colored backgrounds, progress feedback
+- **Audio** — Enable/disable audio, volume, **sound packs** (productivity, fitness, classic themes), and **voice cues** with voice selection and preview (Settings → Audio)
+- **Haptics** — Taptic feedback where supported
+- **Appearance** — Customizable background gradient themes
+- **Splash** — Branded launch experience before the main UI
 
-### Pro Features (In-App Purchase)
+### Pro (StoreKit — in-app purchase)
 
-- **Unlimited Routine Saves** - Free version limited to 3 routines
-- **Premium Sound Packs** - Themed audio collections (Calm, Intense, Retro Arcade)
-- **Voice Cues** - Text-to-speech announcements for step names and countdowns
+- **Unlimited routines** — Free tier is limited to **3** saved routines; Pro removes the cap
+- **iCloud sync** — CloudKit-backed sync of routines for signed-in iCloud users (Pro)
+- **Advanced analytics** — Deeper stats and trends (Pro-gated in app)
+- **Routine groups** — Organization feature called out for Pro in product copy
+- **Home screen widgets** — Listed among Pro capabilities for marketing / future delivery
 
-### Technical Features
+### Technical
 
-- **100% Offline** - No internet connection required
-- **Haptic Feedback** - Taptic Engine integration for tactile cues
-- **Audio Management** - System sounds and voice synthesis
-- **StoreKit Integration** - Secure in-app purchase handling
+- **SwiftUI** — Declarative UI; `NavigationView` with stack style on iPhone
+- **Persistence** — `UserDefaults` for routines and preferences; optional **CloudKit** private database when Pro + iCloud available
+- **StoreKit 2** — Products, purchases, transaction listener on the main actor
+- **CloudKit** — Container `iCloud.com.flowpace.app` (must match Apple Developer + Xcode capability)
 
-## 🏗️ Project Structure
+Core timer and local data work **without a network**; **iCloud sync** requires network and an eligible Apple ID.
+
+## Project structure
 
 ```
 FlowPace/
-├── FlowPace.xcodeproj/          # Xcode project file
-├── FlowPace/                    # Main app source
-│   ├── FlowPaceApp.swift        # App entry point
-│   ├── ContentView.swift        # Main navigation container
-│   ├── Views/                   # UI Views
-│   │   ├── RoutineListView.swift    # Home screen with routine list
-│   │   ├── RoutineEditorView.swift  # Routine builder interface
-│   │   ├── ActiveTimerView.swift    # Active timer display
-│   │   ├── AddStepView.swift        # Step creation interface
-│   │   ├── AddGroupView.swift       # Group creation interface
-│   │   ├── EditItemView.swift       # Item editing interface
-│   │   └── SettingsView.swift       # App settings and Pro upgrade
-│   ├── Models/                  # Data models
-│   │   └── Models.swift         # Core data structures
-│   ├── Managers/                # Business logic managers
-│   │   ├── RoutineManager.swift     # Routine CRUD operations
-│   │   ├── TimerManager.swift       # Timer logic and state
-│   │   ├── AudioManager.swift       # Audio playback and voice
-│   │   ├── HapticManager.swift      # Haptic feedback
-│   │   └── StoreKitManager.swift    # In-app purchases
-│   ├── Assets.xcassets/         # App icons and colors
-│   ├── FlowPace.entitlements    # App capabilities
-│   └── Info.plist               # App configuration
-└── README.md                    # This file
+├── FlowPace.xcodeproj/
+├── FlowPace/
+│   ├── FlowPaceApp.swift
+│   ├── ContentView.swift
+│   ├── Views/
+│   │   ├── RoutineListView.swift
+│   │   ├── RoutineEditorView.swift
+│   │   ├── ActiveTimerView.swift
+│   │   ├── SettingsView.swift
+│   │   ├── AnalyticsView.swift
+│   │   ├── SplashScreenView.swift
+│   │   ├── AddStepView.swift / AddGroupView.swift / EditItemView.swift
+│   │   ├── PrivacyPolicyView.swift / TermsOfServiceView.swift / ContactSupportView.swift
+│   │   └── …
+│   ├── Models/
+│   │   └── Models.swift
+│   ├── Managers/
+│   │   ├── RoutineManager.swift
+│   │   ├── TimerManager.swift
+│   │   ├── AudioManager.swift
+│   │   ├── HapticManager.swift
+│   │   ├── StoreKitManager.swift
+│   │   ├── CloudKitManager.swift
+│   │   └── BackgroundColorManager.swift
+│   ├── Assets.xcassets/
+│   ├── FlowPace.entitlements
+│   └── Info.plist
+└── README.md
 ```
 
-## 🚀 Getting Started
+## Getting started
 
 ### Prerequisites
 
-- Xcode 15.0+ (iOS 17.0+ deployment target)
-- macOS 14.0+
-- iOS Simulator or physical device
+- **Xcode** 15+ recommended (project targets **iOS 17+**)
+- **macOS** with Xcode installed
+- Simulator or a physical device
 
-### Installation
+### Run the app
 
-1. Clone the repository
-2. Open `FlowPace.xcodeproj` in Xcode
-3. Select your development team in project settings
-4. Build and run on simulator or device
+1. Clone the repo and open **`FlowPace.xcodeproj`**
+2. **Signing & Capabilities** — Select your team; ensure **iCloud → CloudKit** is enabled and the container **`iCloud.com.flowpace.app`** matches `FlowPace.entitlements` and `CloudKitManager`’s container identifier
+3. Build and run (**⌘R**)
 
-### First Run
+### First run
 
-- The app will start with no routines
-- Tap the "+" button to create your first routine
-- Add steps and groups to build your timer sequence
-- Save and start your routine
+- Starts on the splash, then the routine list (empty until you add routines)
+- Create routines from the list / editor; configure audio under **Settings**
 
-## 🎨 Architecture
+## Architecture (high level)
 
-### Design Patterns
+- **Models** — `Routine`, `Step`, `Group`, `RoutineItem`, colors, completed-session types
+- **Managers** — `@MainActor` observable objects for timer flow, persistence, audio, StoreKit, CloudKit, and UI chrome (backgrounds)
+- **Views** — Consume managers via `@EnvironmentObject` / bindings; sheets for editor, settings, analytics
 
-- **MVVM** - Model-View-ViewModel architecture
-- **SwiftUI** - Modern declarative UI framework
-- **Combine** - Reactive programming for data flow
-- **@MainActor** - Main thread safety for UI updates
+## Configuration
 
-### Data Flow
+### Entitlements (`FlowPace/FlowPace.entitlements`)
 
-1. **Models** define the data structures (Routine, Step, Group)
-2. **Managers** handle business logic and state management
-3. **Views** observe managers and update the UI
-4. **User interactions** flow back through managers to update state
+- **iCloud** — CloudKit + container `iCloud.com.flowpace.app`
+- **Associated domains** — `applinks:flowpace.app`
+- **Apple Pay** — Merchant `merchant.com.flowpace.app` (if using Apple Pay in the app)
 
-### Key Components
+### StoreKit product identifiers
 
-- **RoutineManager** - Handles routine persistence using UserDefaults
-- **TimerManager** - Manages timer state, step progression, and timing logic
-- **AudioManager** - Controls audio playback and voice synthesis
-- **HapticManager** - Provides tactile feedback using Core Haptics
-- **StoreKitManager** - Handles Pro version purchases and restoration
+Configure the same IDs in **App Store Connect** (and StoreKit Configuration files for local testing):
 
-## 🔧 Configuration
+- `com.flowpace.pro.onetime`
+- `com.flowpace.pro.monthly`
+- `com.flowpace.pro.yearly`
 
-### App Capabilities
+### Info usage strings
 
-- In-App Purchase support
-- Associated domains for deep linking
-- Background audio (if needed for future features)
+`Info.plist` includes usage descriptions for microphone and camera as declared by the project; adjust copy if you change features.
 
-### Permissions
+## Testing
 
-- Microphone access for voice cues
-- Camera access for potential QR code features
+- Exercise **free tier** — routine limit (3), analytics / Pro gates where still applied
+- Exercise **Pro** — StoreKit testing configuration, purchases, restore, iCloud sync paths
+- **Audio** — Sound pack selection and voice cues with **audio enabled** and **voice cues** toggled on in Settings
 
-### StoreKit Setup
+## Deployment checklist
 
-1. Configure product ID: `com.flowpace.pro`
-2. Set up App Store Connect product
-3. Test with StoreKit testing framework
+1. Version / build in Xcode and App Store Connect  
+2. App ID capabilities: **iCloud (CloudKit)**, **In-App Purchase**, and any others you ship (associated domains, Apple Pay, etc.)  
+3. CloudKit Dashboard for **`iCloud.com.flowpace.app`**  
+4. Device testing (audio, haptics, purchases, sync)
 
-## 📱 User Experience
+## Contributing
 
-### Routine Creation Flow
+- Prefer small, focused changes; keep SwiftUI previews and `README` in sync when behavior or capabilities change  
+- Follow existing naming and file layout under `FlowPace/`
 
-1. **Name Your Routine** - Give it a descriptive name
-2. **Add Steps** - Individual timed elements with colors
-3. **Create Groups** - Repeating sequences with loop counts
-4. **Reorder & Edit** - Drag to reorder, tap to edit
-5. **Save & Start** - Save your routine and begin timing
+## License
 
-### Active Timer Experience
+Proprietary — all rights reserved.
 
-- **Large Display** - Optimized for visibility during activities
-- **Color Coding** - Background changes with each step
-- **Progress Indicators** - Circular and linear progress bars
-- **Audio & Haptic** - Multi-sensory feedback for step changes
+## Support
 
-### Settings & Customization
-
-- Audio preferences (enable/disable, volume)
-- Haptic feedback settings
-- Pro version management
-- Purchase restoration
-
-## 🧪 Testing
-
-### Development Testing
-
-- Use Xcode's built-in testing framework
-- Test on multiple device sizes and orientations
-- Verify haptic feedback on supported devices
-- Test audio features with different volume levels
-
-### StoreKit Testing
-
-- Use StoreKit testing framework for in-app purchase testing
-- Test purchase flow, restoration, and Pro feature unlocking
-- Verify free version limitations (3 routine limit)
-
-## 🚀 Deployment
-
-### App Store Preparation
-
-1. Update version and build numbers
-2. Configure App Store Connect metadata
-3. Test on physical devices
-4. Submit for review
-
-### Release Notes
-
-- **v1.0** - Initial release with core features
-- **v1.1** - Voice cues and premium sound packs
-- **Future** - watchOS companion, lock screen widgets, HealthKit integration
-
-## 🤝 Contributing
-
-### Development Guidelines
-
-- Follow SwiftUI best practices
-- Use semantic naming conventions
-- Maintain MVVM architecture
-- Add comprehensive documentation
-- Include preview providers for SwiftUI views
-
-### Code Style
-
-- Use SwiftLint for consistent formatting
-- Follow Apple's Human Interface Guidelines
-- Implement proper error handling
-- Use appropriate access control levels
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
-## 📞 Support
-
-- **Email**: coming soon!!
-- **Website**: coming soon?
-- **Documentation**: [Link to documentation]
+Contact and web links can be added here when they are finalized.
 
 ---
 
-**Built with ❤️ using SwiftUI and modern iOS development practices**
+Built with SwiftUI and current iOS APIs.
