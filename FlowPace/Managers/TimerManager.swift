@@ -1,6 +1,5 @@
 import Foundation
 import Combine
-import UIKit
 
 @MainActor
 class TimerManager: ObservableObject {
@@ -20,18 +19,9 @@ class TimerManager: ObservableObject {
     private var totalDuration: TimeInterval = 0
 
     private var flattenedSteps: [Step] = []
-    private var stepStartTimes: [TimeInterval] = []
 
-    // Date-based timing: snapshot the wall-clock time on each tick
-    private var lastTickDate: Date?
-    private var accumulatedElapsed: TimeInterval = 0
-
-    // Persistence keys
-    private let persistedRoutineIdKey = "timerPersistedRoutineId"
-    private let persistedStepIndexKey = "timerPersistedStepIndex"
-    private let persistedAccumulatedElapsedKey = "timerPersistedAccumulatedElapsed"
-    private let persistedTotalDurationKey = "timerPersistedTotalDuration"
-    private let persistedFlattenedStepsKey = "timerPersistedFlattenedSteps"
+    // Track elapsed time for current step to detect completion
+    private var stepElapsed: TimeInterval = 0
 
     // Computed properties to ensure progress values are always valid
     var safeStepProgress: Double {
@@ -42,33 +32,12 @@ class TimerManager: ObservableObject {
         return overallProgress.isNaN || overallProgress.isInfinite ? 0 : max(0, min(1, overallProgress))
     }
 
-    init() {
-        // Listen for app lifecycle to handle background/foreground
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(appDidEnterBackground),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(appWillEnterForeground),
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil
-        )
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     // MARK: - Public Methods
 
     func startRoutine(_ routine: Routine) {
         self.routine = routine
         self.totalDuration = max(0, routine.totalDuration)
         self.flattenedSteps = flattenRoutine(routine)
-        self.stepStartTimes = calculateStepStartTimes()
 
         guard !flattenedSteps.isEmpty else {
             print("TimerManager: No valid steps found in routine")
@@ -91,7 +60,6 @@ class TimerManager: ObservableObject {
     func stopRoutine() {
         stopTimer()
         resetToBeginning()
-        clearPersistedState()
     }
 
     func togglePlayPause() {
@@ -117,97 +85,10 @@ class TimerManager: ObservableObject {
         resetToBeginning()
     }
 
-    // MARK: - Background / Foreground Handling
-
-    @objc private func appDidEnterBackground() {
-        guard state == .running else { return }
-        // Snapshot the elapsed time so we can adjust on foreground
-        if let lastTick = lastTickDate {
-            let elapsedSinceTick = Date().timeIntervalSince(lastTick)
-            accumulatedElapsed += max(0, elapsedSinceTick)
-        }
-        // Persist state so we survive a kill
-        persistState()
-        // Invalidate the timer -- it won't fire in background
-        timer?.invalidate()
-        timer = nil
-    }
-
-    @objc private func appWillEnterForeground() {
-        guard state == .running else { return }
-        // Recalculate based on wall-clock time accumulated while backgrounded
-        // accumulatedElapsed was already captured in didEnterBackground
-        // Now just restart the tick loop
-        lastTickDate = Date()
-        startTimer()
-    }
-
-    // MARK: - State Persistence
-
-    private func persistState() {
-        guard let routine = routine else { return }
-        let defaults = UserDefaults.standard
-        defaults.set(routine.id.uuidString, forKey: persistedRoutineIdKey)
-        defaults.set(currentStepIndex, forKey: persistedStepIndexKey)
-        defaults.set(accumulatedElapsed, forKey: persistedAccumulatedElapsedKey)
-        defaults.set(totalDuration, forKey: persistedTotalDurationKey)
-        if let data = try? JSONEncoder().encode(flattenedSteps) {
-            defaults.set(data, forKey: persistedFlattenedStepsKey)
-        }
-    }
-
-    private func clearPersistedState() {
-        let defaults = UserDefaults.standard
-        defaults.removeObject(forKey: persistedRoutineIdKey)
-        defaults.removeObject(forKey: persistedStepIndexKey)
-        defaults.removeObject(forKey: persistedAccumulatedElapsedKey)
-        defaults.removeObject(forKey: persistedTotalDurationKey)
-        defaults.removeObject(forKey: persistedFlattenedStepsKey)
-    }
-
-    func restorePersistedState(using routineManager: RoutineManager) -> Bool {
-        let defaults = UserDefaults.standard
-        guard let routineIdString = defaults.string(forKey: persistedRoutineIdKey),
-              let routineId = UUID(uuidString: routineIdString),
-              let routine = routineManager.getRoutine(by: routineId) else {
-            return false
-        }
-
-        let stepIndex = defaults.integer(forKey: persistedStepIndexKey)
-        let savedAccumulated = defaults.double(forKey: persistedAccumulatedElapsedKey)
-        let savedTotalDuration = defaults.double(forKey: persistedTotalDurationKey)
-
-        guard let stepsData = defaults.data(forKey: persistedFlattenedStepsKey),
-              let savedSteps = try? JSONDecoder().decode([Step].self, from: stepsData) else {
-            return false
-        }
-
-        // Only restore if the timer was actually running
-        guard stepIndex < savedSteps.count else { return false }
-
-        self.routine = routine
-        self.flattenedSteps = savedSteps
-        self.currentStepIndex = stepIndex
-        self.accumulatedElapsed = savedAccumulated
-        self.totalDuration = max(0, savedTotalDuration)
-        self.totalElapsed = savedAccumulated
-        self.stepStartTimes = calculateStepStartTimes()
-
-        // Restore the current step display
-        updateCurrentStep()
-
-        // Resume the timer
-        state = .running
-        startTimer()
-
-        return true
-    }
-
     // MARK: - Private Timer Methods
 
     private func startTimer() {
         state = .running
-        lastTickDate = Date()
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.updateTimer()
@@ -219,19 +100,12 @@ class TimerManager: ObservableObject {
         timer?.invalidate()
         timer = nil
         state = .idle
-        lastTickDate = nil
     }
 
     private func pauseTimer() {
-        // Snapshot elapsed before pausing
-        if let lastTick = lastTickDate {
-            let elapsedSinceTick = Date().timeIntervalSince(lastTick)
-            accumulatedElapsed += max(0, elapsedSinceTick)
-        }
         timer?.invalidate()
         timer = nil
         state = .paused
-        lastTickDate = nil
     }
 
     private func resumeTimer() {
@@ -242,21 +116,14 @@ class TimerManager: ObservableObject {
         guard let currentStep = currentStep else { return }
         guard currentStep.step.duration > 0 else { return }
 
-        // Date-based elapsed calculation: accumulated + time since last tick
-        var elapsedSinceTick: TimeInterval = 0
-        if let lastTick = lastTickDate {
-            elapsedSinceTick = max(0, Date().timeIntervalSince(lastTick))
+        timeRemaining -= 0.1
+        totalElapsed += 0.1
+        stepElapsed += 0.1
+
+        // Ensure timeRemaining doesn't go below 0
+        if timeRemaining < 0 {
+            timeRemaining = 0
         }
-        let currentTotalElapsed = accumulatedElapsed + elapsedSinceTick
-        lastTickDate = Date()
-
-        totalElapsed = currentTotalElapsed
-
-        // Calculate remaining time for current step
-        let stepStartTime = stepStartTimes.indices.contains(currentStepIndex) ? stepStartTimes[currentStepIndex] : 0
-        let stepElapsed = max(0, currentTotalElapsed - stepStartTime)
-        let newRemaining = max(0, currentStep.step.duration - stepElapsed)
-        timeRemaining = newRemaining
 
         // Update step progress with safety checks
         if currentStep.step.duration > 0 {
@@ -267,15 +134,13 @@ class TimerManager: ObservableObject {
 
         // Update overall progress with safety checks
         if totalDuration > 0 {
-            overallProgress = max(0, min(1, currentTotalElapsed / totalDuration))
+            overallProgress = max(0, min(1, totalElapsed / totalDuration))
         } else {
             overallProgress = 0
         }
 
         // Check if current step is complete
         if timeRemaining <= 0 {
-            // Commit accumulated time before moving to next step
-            accumulatedElapsed = currentTotalElapsed
             moveToNextStep()
         }
     }
@@ -284,28 +149,18 @@ class TimerManager: ObservableObject {
 
     private func moveToNextStep() {
         currentStepIndex += 1
+        stepElapsed = 0
 
         if currentStepIndex >= flattenedSteps.count {
-            // Routine completed
             completeRoutine()
         } else {
-            // Commit accumulated time
-            if let lastTick = lastTickDate {
-                let elapsedSinceTick = max(0, Date().timeIntervalSince(lastTick))
-                accumulatedElapsed += elapsedSinceTick
-                lastTickDate = Date()
-            }
-            // Move to next step
             updateCurrentStep()
         }
     }
 
     private func moveToPreviousStep() {
         currentStepIndex = max(0, currentStepIndex - 1)
-        // Recalculate accumulated elapsed to match the start of the new step
-        if stepStartTimes.indices.contains(currentStepIndex) {
-            accumulatedElapsed = stepStartTimes[currentStepIndex]
-        }
+        stepElapsed = 0
         updateCurrentStep()
     }
 
@@ -313,11 +168,7 @@ class TimerManager: ObservableObject {
         guard currentStepIndex < flattenedSteps.count else { return }
 
         let step = flattenedSteps[currentStepIndex]
-
-        // Calculate remaining based on accumulated elapsed
-        let stepStartTime = stepStartTimes.indices.contains(currentStepIndex) ? stepStartTimes[currentStepIndex] : 0
-        let stepElapsed = max(0, accumulatedElapsed - stepStartTime)
-        timeRemaining = max(0, step.duration - stepElapsed)
+        timeRemaining = max(0, step.duration)
 
         // Update current step
         currentStep = TimerStep(
@@ -345,6 +196,7 @@ class TimerManager: ObservableObject {
         // Reset step progress
         stepProgress = 0
         overallProgress = 0
+        stepElapsed = 0
     }
 
     private func resetToBeginning() {
@@ -352,14 +204,13 @@ class TimerManager: ObservableObject {
         currentGroupIndex = 0
         currentLoopIndex = 0
         totalElapsed = 0
-        accumulatedElapsed = 0
+        stepElapsed = 0
         timeRemaining = 0
         overallProgress = 0
         stepProgress = 0
         currentStep = nil
         nextStep = nil
         state = .idle
-        lastTickDate = nil
     }
 
     private func completeRoutine() {
@@ -381,7 +232,6 @@ class TimerManager: ObservableObject {
             )
         }
         stepProgress = 1.0
-        clearPersistedState()
     }
 
     // MARK: - Helper Methods
@@ -407,18 +257,6 @@ class TimerManager: ObservableObject {
         }
 
         return steps
-    }
-
-    private func calculateStepStartTimes() -> [TimeInterval] {
-        var startTimes: [TimeInterval] = []
-        var currentTime: TimeInterval = 0
-
-        for step in flattenedSteps {
-            startTimes.append(currentTime)
-            currentTime += step.duration
-        }
-
-        return startTimes
     }
 
     // MARK: - Computed Properties
