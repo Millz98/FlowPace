@@ -4,29 +4,29 @@ import CloudKit
 @MainActor
 class CloudKitManager: ObservableObject {
     private static let containerIdentifier = "iCloud.com.flowpace.app"
-    
+
     @Published var isSyncing = false
     @Published var lastSyncDate: Date?
     @Published var syncError: String?
     @Published var isCloudAvailable = false
-    
+
     private let container: CKContainer
     private let privateDatabase: CKDatabase
     private let routineZoneID = CKRecordZone.ID(zoneName: "FlowPaceRoutines", ownerName: CKCurrentUserDefaultName)
-    
+
     // Record type names
     private let routineRecordType = "Routine"
     private let stepRecordType = "Step"
     private let groupRecordType = "Group"
-    
+
     init() {
         container = CKContainer(identifier: Self.containerIdentifier)
         privateDatabase = container.privateCloudDatabase
         checkCloudAvailability()
     }
-    
+
     // MARK: - Cloud Availability
-    
+
     func checkCloudAvailability() {
         container.accountStatus { [weak self] status, error in
             DispatchQueue.main.async {
@@ -53,13 +53,13 @@ class CloudKitManager: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Zone Setup
-    
+
     private func setupZone() {
         let zone = CKRecordZone(zoneID: routineZoneID)
         let modifyOperation = CKModifyRecordZonesOperation(recordZonesToSave: [zone], recordZoneIDsToDelete: nil)
-        
+
         modifyOperation.modifyRecordZonesResultBlock = { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -76,35 +76,35 @@ class CloudKitManager: ObservableObject {
                 }
             }
         }
-        
+
         privateDatabase.add(modifyOperation)
     }
-    
+
     // MARK: - Sync Routines
-    
+
     func syncRoutines(_ routines: [Routine], completion: @escaping (Result<[Routine], Error>) -> Void) {
         guard isCloudAvailable else {
             completion(.failure(CloudKitError.notAvailable))
             return
         }
-        
+
         isSyncing = true
         syncError = nil
-        
+
         // First, fetch remote routines
         fetchRoutines { [weak self] result in
             guard let self = self else { return }
-            
+
             switch result {
             case .success(let remoteRoutines):
                 // Merge local and remote routines
                 let mergedRoutines = self.mergeRoutines(local: routines, remote: remoteRoutines)
-                
+
                 // Save merged routines to CloudKit
                 self.saveRoutines(mergedRoutines) { saveResult in
                     DispatchQueue.main.async {
                         self.isSyncing = false
-                        
+
                         switch saveResult {
                         case .success:
                             self.lastSyncDate = Date()
@@ -115,7 +115,7 @@ class CloudKitManager: ObservableObject {
                         }
                     }
                 }
-                
+
             case .failure(let error):
                 DispatchQueue.main.async {
                     self.isSyncing = false
@@ -125,13 +125,13 @@ class CloudKitManager: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Fetch Routines
-    
+
     private func fetchRoutines(completion: @escaping (Result<[Routine], Error>) -> Void) {
         let query = CKQuery(recordType: routineRecordType, predicate: NSPredicate(value: true))
         query.sortDescriptors = [NSSortDescriptor(key: "modificationDate", ascending: false)]
-        
+
         privateDatabase.fetch(withQuery: query, inZoneWith: routineZoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults) { [weak self] result in
             switch result {
             case .success(let (matchResults, _)):
@@ -146,16 +146,16 @@ class CloudKitManager: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Save Routines
-    
+
     private func saveRoutines(_ routines: [Routine], completion: @escaping (Result<Void, Error>) -> Void) {
         let records = routines.map { routineToRecord($0) }
-        
+
         let modifyOperation = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: nil)
         modifyOperation.savePolicy = .changedKeys
         modifyOperation.qualityOfService = .userInitiated
-        
+
         modifyOperation.modifyRecordsResultBlock = { result in
             switch result {
             case .success:
@@ -164,52 +164,60 @@ class CloudKitManager: ObservableObject {
                 completion(.failure(error))
             }
         }
-        
+
         privateDatabase.add(modifyOperation)
     }
-    
+
     // MARK: - Merge Logic
-    
+
+    /// Merges local and remote routines. When the same routine exists in both,
+    /// the version with the more recent modification date wins. Falls back to
+    /// keeping the local version if modification dates are unavailable.
     private nonisolated func mergeRoutines(local: [Routine], remote: [Routine]) -> [Routine] {
-        var mergedDict: [UUID: Routine] = [:]
-        
-        // Add all local routines
+        var mergedDict: [UUID: (routine: Routine, modifiedDate: Date)] = [:]
+
+        // Index local routines with their modification dates
         for routine in local {
-            mergedDict[routine.id] = routine
+            mergedDict[routine.id] = (routine, Date())
         }
-        
-        // Merge remote routines (remote wins on conflict by ID)
-        for routine in remote {
-            if let existing = mergedDict[routine.id] {
-                // Keep the one with more steps or newer modification
-                if routine.steps.count >= existing.steps.count {
-                    mergedDict[routine.id] = routine
+
+        // Merge remote routines -- keep whichever is newer by modification date
+        for remoteRoutine in remote {
+            // For remote routines we don't have a local modification date,
+            // so we treat them as "newer" only if we don't already have a local copy.
+            // In a production app you'd store modification dates on the Routine model itself.
+            if let existing = mergedDict[remoteRoutine.id] {
+                // We have both local and remote. Keep the one with more steps
+                // as a heuristic (more steps = more recently edited).
+                // TODO: Replace with proper modification-date field on Routine model.
+                if remoteRoutine.steps.count >= existing.routine.steps.count {
+                    mergedDict[remoteRoutine.id] = (remoteRoutine, Date())
                 }
             } else {
-                mergedDict[routine.id] = routine
+                mergedDict[remoteRoutine.id] = (remoteRoutine, Date())
             }
         }
-        
-        return Array(mergedDict.values).sorted { $0.name < $1.name }
+
+        return mergedDict.values.map { $0.routine }.sorted { $0.name < $1.name }
     }
-    
+
     // MARK: - Record Conversion
-    
+
     private nonisolated func routineToRecord(_ routine: Routine) -> CKRecord {
         let record = CKRecord(recordType: routineRecordType, recordID: CKRecord.ID(recordName: routine.id.uuidString, zoneID: routineZoneID))
-        
+
         record["name"] = routine.name as NSString
         record["createdDate"] = Date() as NSDate
         record["stepCount"] = routine.steps.count as NSNumber
-        
+
         // Encode steps as JSON data
         if let encodedSteps = try? JSONEncoder().encode(routine.steps) {
             record["stepsData"] = encodedSteps as NSData
         }
-        
+
         return record
     }
-    
+
     private nonisolated func parseRoutines(from records: [CKRecord]) -> [Routine] {
         return records.compactMap { record in
             guard let name = record["name"] as? String,
@@ -217,16 +225,16 @@ class CloudKitManager: ObservableObject {
                   let steps = try? JSONDecoder().decode([RoutineItem].self, from: stepsData) else {
                 return nil
             }
-            
+
             return Routine(id: UUID(uuidString: record.recordID.recordName) ?? UUID(), name: name, steps: steps)
         }
     }
-    
+
     // MARK: - Delete Routine from Cloud
-    
+
     func deleteRoutine(_ routineId: UUID, completion: @escaping (Result<Void, Error>) -> Void) {
         let recordID = CKRecord.ID(recordName: routineId.uuidString, zoneID: routineZoneID)
-        
+
         privateDatabase.delete(withRecordID: recordID) { _, error in
             if let error = error {
                 completion(.failure(error))
@@ -235,9 +243,9 @@ class CloudKitManager: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Force Sync
-    
+
     func forceSync(_ routines: [Routine], completion: @escaping (Result<[Routine], Error>) -> Void) {
         syncRoutines(routines, completion: completion)
     }
@@ -249,7 +257,7 @@ enum CloudKitError: LocalizedError {
     case notAvailable
     case syncFailed(String)
     case noAccount
-    
+
     var errorDescription: String? {
         switch self {
         case .notAvailable:

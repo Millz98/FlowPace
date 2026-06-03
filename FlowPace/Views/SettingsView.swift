@@ -466,10 +466,9 @@ struct SettingsView: View {
              TermsOfServiceView()
                  .environmentObject(backgroundColorManager)
          }
-         // TODO: Uncomment after adding ContactSupportView.swift to Xcode project
-         // .sheet(isPresented: $showingContactSupport) {
-         //     ContactSupportView()
-         // }
+         .sheet(isPresented: $showingContactSupport) {
+             ContactSupportView()
+         }
         .alert("Purchase Error", isPresented: .constant(storeKitManager.errorMessage != nil)) {
             Button("OK") {
                 storeKitManager.errorMessage = nil

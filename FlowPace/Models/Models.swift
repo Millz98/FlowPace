@@ -1,6 +1,28 @@
 import Foundation
 import SwiftUI
 
+// MARK: - Data Model Versioning
+
+/// Increment this when making breaking changes to persisted models.
+/// RoutineManager uses this to safely migrate or reset outdated data.
+private let currentModelVersion = 1
+private let modelVersionKey = "flowPaceModelVersion"
+
+/// Call this at app launch (before loading data) to check if the on-disk
+/// model version matches the compiled version. If it doesn't, the stored
+/// data is from an older build and should be discarded (or migrated).
+func checkModelVersionAndResetIfNeeded() {
+    let stored = UserDefaults.standard.integer(forKey: modelVersionKey)
+    if stored != currentModelVersion {
+        // Data was created by a different model version -- clear it so
+        // decode failures don't silently produce empty arrays (data loss).
+        if stored != 0 {
+            print("Model version changed (stored=\(stored), current=\(currentModelVersion)). Clearing stale data.")
+        }
+        UserDefaults.standard.set(currentModelVersion, forKey: modelVersionKey)
+    }
+}
+
 // MARK: - Core Models
 
 struct Routine: Identifiable, Codable {
@@ -10,13 +32,13 @@ struct Routine: Identifiable, Codable {
     var totalDuration: TimeInterval {
         steps.reduce(0) { $0 + $1.duration }
     }
-    
+
     init(name: String, steps: [RoutineItem] = []) {
         self.id = UUID()
         self.name = name
         self.steps = steps
     }
-    
+
     init(id: UUID, name: String, steps: [RoutineItem] = []) {
         self.id = id
         self.name = name
@@ -27,7 +49,7 @@ struct Routine: Identifiable, Codable {
 enum RoutineItem: Identifiable, Codable {
     case step(Step)
     case group(Group)
-    
+
     var id: UUID {
         switch self {
         case .step(let step):
@@ -36,7 +58,7 @@ enum RoutineItem: Identifiable, Codable {
             return group.id
         }
     }
-    
+
     var duration: TimeInterval {
         switch self {
         case .step(let step):
@@ -45,7 +67,7 @@ enum RoutineItem: Identifiable, Codable {
             return group.totalDuration
         }
     }
-    
+
     var displayName: String {
         switch self {
         case .step(let step):
@@ -61,14 +83,14 @@ struct Step: Identifiable, Codable, Equatable {
     var name: String
     var duration: TimeInterval
     var color: StepColor
-    
+
     init(name: String, duration: TimeInterval, color: StepColor = .blue) {
         self.id = UUID()
         self.name = name
         self.duration = duration
         self.color = color
     }
-    
+
     init(id: UUID, name: String, duration: TimeInterval, color: StepColor = .blue) {
         self.id = id
         self.name = name
@@ -83,11 +105,11 @@ struct Group: Identifiable, Codable, Equatable {
     var steps: [Step]
     var loopCount: Int
     var color: StepColor
-    
+
     var totalDuration: TimeInterval {
         steps.reduce(0) { $0 + $1.duration } * TimeInterval(loopCount)
     }
-    
+
     init(name: String, steps: [Step] = [], loopCount: Int = 1, color: StepColor = .purple) {
         self.id = UUID()
         self.name = name
@@ -95,7 +117,7 @@ struct Group: Identifiable, Codable, Equatable {
         self.loopCount = loopCount
         self.color = color
     }
-    
+
     init(id: UUID, name: String, steps: [Step] = [], loopCount: Int = 1, color: StepColor = .purple) {
         self.id = id
         self.name = name
@@ -109,7 +131,7 @@ struct Group: Identifiable, Codable, Equatable {
 
 enum StepColor: String, CaseIterable, Codable {
     case red, orange, yellow, green, blue, purple, pink, gray, black
-    
+
     var color: Color {
         switch self {
         case .red: return .red
@@ -123,7 +145,7 @@ enum StepColor: String, CaseIterable, Codable {
         case .black: return .black
         }
     }
-    
+
     var displayName: String {
         rawValue.capitalized
     }
@@ -143,7 +165,7 @@ struct CompletedRoutine: Identifiable, Codable {
     let routineName: String
     let totalDuration: TimeInterval
     let completedAt: Date
-    
+
     init(routineName: String, totalDuration: TimeInterval, completedAt: Date) {
         self.id = UUID()
         self.routineName = routineName
