@@ -9,9 +9,7 @@ class StoreKitManager: ObservableObject {
     @Published var errorMessage: String?
 
     private let productIdentifiers = [
-        "com.flowpace.pro.onetime",     // $9.99 CAD one-time purchase
-        "com.flowpace.pro.monthly",      // $1.99 CAD/month subscription
-        "com.flowpace.pro.yearly"        // $7.99 CAD/year subscription
+        "com.flowpace.pro.onetime"     // $9.99 CAD one-time purchase
     ]
 
     // Pro features available to subscribers -- only list features that are actually implemented
@@ -164,14 +162,6 @@ class StoreKitManager: ObservableObject {
     // Convenience methods for each product type
     func getOneTimeProduct() -> Product? {
         getProProduct(productId: "com.flowpace.pro.onetime")
-    }
-
-    func getMonthlyProduct() -> Product? {
-        getProProduct(productId: "com.flowpace.pro.monthly")
-    }
-
-    func getYearlyProduct() -> Product? {
-        getProProduct(productId: "com.flowpace.pro.yearly")
     }
 
     var canPurchasePro: Bool {
