@@ -91,9 +91,7 @@ struct RoutineListView: View {
                         
                         // Routine counter
                         HStack {
-                            Text(storeKitManager.isPro ? 
-                                 "My Routines (\(routineManager.routines.count))" : 
-                                 "My Routines (\(routineManager.routines.count)/\(routineManager.getRoutineLimit()))")
+                            Text("My Routines (\(routineManager.routines.count))")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.white)
@@ -239,15 +237,13 @@ struct RoutineListView: View {
                 if !routineManager.routines.isEmpty {
                     VStack(spacing: 16) {
                         // Create new routine button with liquid glass
-                        Button(action: { 
-                            if routineManager.canAddRoutine() {
-                                showingCreateRoutine = true
-                            }
+                        Button(action: {
+                            showingCreateRoutine = true
                         }) {
                             HStack(spacing: 12) {
-                                Image(systemName: routineManager.canAddRoutine() ? "plus.circle.fill" : "lock.circle.fill")
+                                Image(systemName: "plus.circle.fill")
                                     .font(.title2)
-                                Text(routineManager.canAddRoutine() ? "Create New Routine" : "Upgrade to Create More")
+                                Text("Create New Routine")
                                     .font(.headline)
                                     .fontWeight(.semibold)
                             }
@@ -275,17 +271,7 @@ struct RoutineListView: View {
                             )
                             .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                         }
-                        .disabled(routineManager.routines.count >= 3 && !storeKitManager.isPro)
-                        .opacity(routineManager.routines.count >= 3 && !storeKitManager.isPro ? 0.6 : 1.0)
                         .padding(.horizontal, 20)
-                        
-                        // Pro upgrade hint if needed
-                        if routineManager.routines.count >= 3 && !storeKitManager.isPro {
-                            Text("Upgrade to Pro for unlimited routines")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.bottom, 10)
-                        }
                     }
                     .padding(.bottom, 30)
                 }

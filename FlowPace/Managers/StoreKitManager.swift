@@ -9,16 +9,16 @@ class StoreKitManager: ObservableObject {
     @Published var errorMessage: String?
 
     private let productIdentifiers = [
-        "com.flowpace.pro.onetime"     // $9.99 CAD one-time purchase
+        "com.flowpace.pro.onetime"     // $2.99 CAD one-time purchase (support the developer)
     ]
 
-    // Pro features available to subscribers -- only list features that are actually implemented
+    // Pro extras — nice-to-have features on top of supporting development
     var proFeatures: [ProFeature] {
         [
             ProFeature(icon: "icloud.fill", title: "iCloud Sync", description: "Sync routines across all your Apple devices"),
             ProFeature(icon: "chart.line.uptrend.xyaxis", title: "Advanced Analytics", description: "Streaks, trends, and time-per-routine insights"),
-            ProFeature(icon: "infinity", title: "Unlimited Routines", description: "Create as many routines as you need"),
-            ProFeature(icon: "square.and.arrow.up", title: "CSV Export", description: "Export your analytics data to CSV")
+            ProFeature(icon: "square.and.arrow.up", title: "CSV Export", description: "Export your analytics data to CSV"),
+            ProFeature(icon: "heart.fill", title: "Support Development", description: "Help keep FlowPace free for everyone")
         ]
     }
     private var updateListenerTask: Task<Void, Never>?
@@ -64,13 +64,10 @@ class StoreKitManager: ObservableObject {
 
             switch result {
             case .success(let verification):
-                // Check whether the transaction is verified
                 switch verification {
                 case .verified(let transaction):
-                    // Deliver content to the user
                     await deliverProFeatures(transaction: transaction)
                 case .unverified(_, let error):
-                    // Transaction failed verification
                     errorMessage = "Transaction verification failed: \(error.localizedDescription)"
                 }
             case .userCancelled:
@@ -104,11 +101,8 @@ class StoreKitManager: ObservableObject {
     // MARK: - Transaction Handling
 
     private func deliverProFeatures(transaction: Transaction) async {
-        // Update the user's pro status
         isPro = true
         UserDefaults.standard.set(true, forKey: "isPro")
-
-        // Finish the transaction
         await transaction.finish()
     }
 
@@ -123,10 +117,8 @@ class StoreKitManager: ObservableObject {
     private func handleTransactionUpdate(_ result: VerificationResult<Transaction>) async {
         switch result {
         case .verified(let transaction):
-            // Deliver content to the user
             await deliverProFeatures(transaction: transaction)
         case .unverified(_, let error):
-            // Transaction failed verification
             print("Transaction verification failed: \(error)")
         }
     }
@@ -134,7 +126,6 @@ class StoreKitManager: ObservableObject {
     // MARK: - Pro Status Management
 
     private func updateProStatus() async {
-        // Check if user has purchased pro version (one-time or subscription)
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result {
                 if productIdentifiers.contains(transaction.productID) {
@@ -145,7 +136,6 @@ class StoreKitManager: ObservableObject {
             }
         }
 
-        // Check UserDefaults as fallback
         isPro = UserDefaults.standard.bool(forKey: "isPro")
     }
 
@@ -159,7 +149,6 @@ class StoreKitManager: ObservableObject {
         getProProduct(productId: productId)?.displayPrice
     }
 
-    // Convenience methods for each product type
     func getOneTimeProduct() -> Product? {
         getProProduct(productId: "com.flowpace.pro.onetime")
     }
@@ -194,13 +183,4 @@ struct ProFeature: Identifiable {
     let icon: String
     let title: String
     let description: String
-}
-
-// MARK: - StoreKit Configuration (for testing)
-
-extension StoreKitManager {
-    func configureStoreKit() {
-        // This would be used for StoreKit testing configuration
-        // In production, this is handled automatically by the App Store
-    }
 }

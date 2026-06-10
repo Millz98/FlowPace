@@ -91,17 +91,17 @@ struct SettingsView: View {
                                  }
                                  
                                 if !storeKitManager.isPro {
-                                    // Professional Upgrade Section
+                                    // Support Section
                                     VStack(spacing: 20) {
                                         // Status Header
                                         HStack {
                                             VStack(alignment: .leading, spacing: 6) {
-                                                Text("Free Plan")
+                                                Text("Support FlowPace")
                                                     .font(.title2)
                                                     .fontWeight(.bold)
                                                     .foregroundColor(.white)
 
-                                                Text("Upgrade for premium features")
+                                                Text("FlowPace is free — support development and unlock extras")
                                                     .font(.subheadline)
                                                     .foregroundColor(.white.opacity(0.8))
                                             }
@@ -115,7 +115,7 @@ struct SettingsView: View {
                                                 ProgressView()
                                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                                     .scaleEffect(0.8)
-                                                Text("Loading pricing...")
+                                                Text("Loading...")
                                                     .font(.subheadline)
                                                     .foregroundColor(.white.opacity(0.7))
                                             }
@@ -131,17 +131,17 @@ struct SettingsView: View {
                                                     )
                                             )
                                         } else if let oneTimeProduct = storeKitManager.getOneTimeProduct() {
-                                            // Single purchase button
+                                            // Single support button
                                             Button(action: {
                                                 Task {
                                                     await storeKitManager.purchasePro(productId: oneTimeProduct.id)
                                                 }
                                             }) {
                                                 VStack(spacing: 4) {
-                                                    Text("Upgrade to Pro")
+                                                    Text("Support FlowPace")
                                                         .font(.headline)
                                                         .fontWeight(.semibold)
-                                                    Text("\(oneTimeProduct.displayPrice) • One-time purchase")
+                                                    Text("\(oneTimeProduct.displayPrice) • One-time")
                                                         .font(.caption)
                                                         .opacity(0.9)
                                                 }
@@ -167,9 +167,9 @@ struct SettingsView: View {
                                             .disabled(storeKitManager.purchaseInProgress)
                                         }
 
-                                        // Features list
+                                        // Extras list
                                         VStack(alignment: .leading, spacing: 12) {
-                                            Text("Pro includes:")
+                                            Text("Includes:")
                                                 .font(.subheadline)
                                                 .fontWeight(.medium)
                                                 .foregroundColor(.white)

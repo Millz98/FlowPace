@@ -9,7 +9,6 @@ class RoutineManager: ObservableObject {
     private let userDefaults = UserDefaults.standard
     private let routinesKey = "savedRoutines"
     private let completedRoutinesKey = "completedRoutines"
-    private let freeRoutineLimit = 3
 
     // Data retention: keep completed routines for max 365 days
     private let completedRoutineRetentionDays: TimeInterval = 365
@@ -50,7 +49,7 @@ class RoutineManager: ObservableObject {
     func addRoutine(_ routine: Routine) {
         // Check if user can add more routines (premium check)
         guard canAddRoutine() else {
-            print("Cannot add routine: Free users limited to \(freeRoutineLimit) routines")
+            print("Cannot add routine: unable to add")
             return
         }
 
@@ -64,17 +63,11 @@ class RoutineManager: ObservableObject {
     }
 
     func canAddRoutine() -> Bool {
-        // Premium users can add unlimited routines
-        if storeKitManager?.isPro == true {
-            return true
-        }
-
-        // Free users limited to 3 routines
-        return routines.count < freeRoutineLimit
+        return true
     }
 
     func getRoutineLimit() -> Int {
-        return storeKitManager?.isPro == true ? Int.max : freeRoutineLimit
+        return Int.max
     }
 
     func updateRoutine(_ routine: Routine) {
