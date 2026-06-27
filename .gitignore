@@ -29,3 +29,6 @@ fastlane/test_output/
 
 # macOS
 .DS_Store
+
+# Serena coding agent
+.serena/
