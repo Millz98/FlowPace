@@ -20,10 +20,17 @@ echo "=========================================="
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 PROJECT_FILE="$PROJECT_DIR/../FlowPace.xcodeproj/project.pbxproj"
+INFO_PLIST="$PROJECT_DIR/../FlowPace/Info.plist"
 
 # Check if project file exists
 if [ ! -f "$PROJECT_FILE" ]; then
     echo -e "${RED}❌ Error: Project file not found at $PROJECT_FILE${NC}"
+    exit 1
+fi
+
+# Check if Info.plist exists
+if [ ! -f "$INFO_PLIST" ]; then
+    echo -e "${RED}❌ Error: Info.plist not found at $INFO_PLIST${NC}"
     exit 1
 fi
 
@@ -34,6 +41,10 @@ get_current_values() {
     CURRENT_VERSION=$(grep "MARKETING_VERSION = " "$PROJECT_FILE" | head -1 | sed 's/.*MARKETING_VERSION = \([0-9.]*\);/\1/')
     CURRENT_BUILD=$(grep "CURRENT_PROJECT_VERSION = " "$PROJECT_FILE" | head -1 | sed 's/.*CURRENT_PROJECT_VERSION = \([0-9]*\);/\1/')
     
+    # Also get values from Info.plist
+    PLIST_VERSION=$(grep -A1 "CFBundleShortVersionString" "$INFO_PLIST" | tail -1 | sed 's/.*<string>\([^<]*\)<\/string>.*/\1/')
+    PLIST_BUILD=$(grep -A1 "CFBundleVersion" "$INFO_PLIST" | tail -1 | sed 's/.*<string>\([^<]*\)<\/string>.*/\1/')
+
     if [ -z "$CURRENT_VERSION" ] || [ -z "$CURRENT_BUILD" ]; then
         echo -e "${RED}❌ Error: Could not find version or build number in project file${NC}"
         exit 1
@@ -42,25 +53,39 @@ get_current_values() {
 
 # Function to display current values
 show_current_values() {
-    echo -e "${YELLOW}📱 Current version: $CURRENT_VERSION${NC}"
-    echo -e "${YELLOW}🔢 Current build: $CURRENT_BUILD${NC}"
+    echo -e "${YELLOW}📱 Current version (project): $CURRENT_VERSION${NC}"
+    echo -e "${YELLOW}📱 Current version (Info.plist): $PLIST_VERSION${NC}"
+    echo -e "${YELLOW}🔢 Current build (project): $CURRENT_BUILD${NC}"
+    echo -e "${YELLOW}🔢 Current build (Info.plist): $PLIST_BUILD${NC}"
 }
 
 # Function to increment build number
 increment_build() {
     NEW_BUILD=$((CURRENT_BUILD + 1))
     echo -e "${GREEN}🆕 New build number: $NEW_BUILD${NC}"
-    
-    # Update all instances of CURRENT_PROJECT_VERSION
+
+    # Update all instances of CURRENT_PROJECT_VERSION in project.pbxproj
     sed -i '' "s/CURRENT_PROJECT_VERSION = $CURRENT_BUILD;/CURRENT_PROJECT_VERSION = $NEW_BUILD;/g" "$PROJECT_FILE"
-    
-    # Verify update
+
+    # Update CFBundleVersion in Info.plist
+    sed -i '' "s|<string>$PLIST_BUILD</string>|<string>$NEW_BUILD</string>|g" "$INFO_PLIST"
+
+    # Verify update in project file
     UPDATED_BUILD=$(grep "CURRENT_PROJECT_VERSION = " "$PROJECT_FILE" | head -1 | sed 's/.*CURRENT_PROJECT_VERSION = \([0-9]*\);/\1/')
-    
+
     if [ "$UPDATED_BUILD" = "$NEW_BUILD" ]; then
         echo -e "${GREEN}✅ Successfully updated build number to $NEW_BUILD${NC}"
     else
         echo -e "${RED}❌ Error: Failed to update build number${NC}"
+        exit 1
+    fi
+
+    # Verify update in Info.plist
+    UPDATED_PLIST_BUILD=$(grep -A1 "CFBundleVersion" "$INFO_PLIST" | tail -1 | sed 's/.*<string>\([^<]*\)<\/string>.*/\1/')
+    if [ "$UPDATED_PLIST_BUILD" = "$NEW_BUILD" ]; then
+        echo -e "${GREEN}✅ Successfully updated Info.plist build to $NEW_BUILD${NC}"
+    else
+        echo -e "${RED}❌ Error: Failed to update Info.plist build${NC}"
         exit 1
     fi
 }
@@ -68,24 +93,36 @@ increment_build() {
 # Function to update version number
 update_version() {
     local new_version=$1
-    
+
     if [[ ! $new_version =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
         echo -e "${RED}❌ Error: Invalid version format. Use format: X.Y or X.Y.Z${NC}"
         exit 1
     fi
-    
+
     echo -e "${GREEN}🆕 New version: $new_version${NC}"
-    
-    # Update all instances of MARKETING_VERSION
+
+    # Update all instances of MARKETING_VERSION in project.pbxproj
     sed -i '' "s/MARKETING_VERSION = $CURRENT_VERSION;/MARKETING_VERSION = $new_version;/g" "$PROJECT_FILE"
-    
-    # Verify update
+
+    # Update CFBundleShortVersionString in Info.plist
+    sed -i '' "s|<string>$PLIST_VERSION</string>|<string>$new_version</string>|g" "$INFO_PLIST"
+
+    # Verify update in project file
     UPDATED_VERSION=$(grep "MARKETING_VERSION = " "$PROJECT_FILE" | head -1 | sed 's/.*MARKETING_VERSION = \([0-9.]*\);/\1/')
-    
+
     if [ "$UPDATED_VERSION" = "$new_version" ]; then
         echo -e "${GREEN}✅ Successfully updated version to $new_version${NC}"
     else
         echo -e "${RED}❌ Error: Failed to update version${NC}"
+        exit 1
+    fi
+
+    # Verify update in Info.plist
+    UPDATED_PLIST_VERSION=$(grep -A1 "CFBundleShortVersionString" "$INFO_PLIST" | tail -1 | sed 's/.*<string>\([^<]*\)<\/string>.*/\1/')
+    if [ "$UPDATED_PLIST_VERSION" = "$new_version" ]; then
+        echo -e "${GREEN}✅ Successfully updated Info.plist version to $new_version${NC}"
+    else
+        echo -e "${RED}❌ Error: Failed to update Info.plist version${NC}"
         exit 1
     fi
 }
