@@ -31,7 +31,7 @@ struct SplashScreenView: View {
                 Spacer()
                 
                 // Version info
-                Text("Version 2.0")
+                Text("Version 1.0")
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.white.opacity(0.5))
