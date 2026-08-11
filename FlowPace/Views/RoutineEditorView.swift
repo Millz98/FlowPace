@@ -25,83 +25,98 @@ struct RoutineEditorView: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Routine Name Input
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Routine Name")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                        
-                        TextField("Enter routine name", text: $routineName)
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(.black)
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.white)
-                                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-                            )
-                            .textFieldStyle(PlainTextFieldStyle())
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 32)
-                    
-                    // Total Duration Display
-                    HStack {
-                        Text("Total Duration:")
-                            .font(.system(size: 18, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white.opacity(0.9))
-                        
-                        Spacer()
-                        
-                        Text(formatDuration(totalDuration))
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [
-                                                Color.blue.opacity(0.3),
-                                                Color.indigo.opacity(0.25),
-                                                Color.purple.opacity(0.2)
-                                            ]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
+                    // Header scrolls out of the way when the keyboard appears
+                    // for the routine name field, instead of crushing the layout.
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            // Routine Name Input
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("Routine Name")
+                                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                
+                                TextField("Enter routine name", text: $routineName)
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(.black)
+                                    .padding()
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(Color.white)
+                                            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                                     )
-                                    .overlay(
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .submitLabel(.done)
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 32)
+                            
+                            // Total Duration Display
+                            HStack {
+                                Text("Total Duration:")
+                                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                    .foregroundColor(.white.opacity(0.9))
+                                
+                                Spacer()
+                                
+                                Text(formatDuration(totalDuration))
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 12)
+                                    .background(
                                         RoundedRectangle(cornerRadius: 20)
-                                            .stroke(Color.white.opacity(0.4), lineWidth: 1)
+                                            .fill(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [
+                                                        Color.blue.opacity(0.3),
+                                                        Color.indigo.opacity(0.25),
+                                                        Color.purple.opacity(0.2)
+                                                    ]),
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                )
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(Color.white.opacity(0.4), lineWidth: 1)
+                                            )
                                     )
-                            )
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 24)
+                            .padding(.bottom, 32)
+                        }
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 32)
+                    .scrollDismissesKeyboard(.interactively)
                     
                     // Steps List
                     if items.isEmpty {
-                        VStack(spacing: 24) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 60))
-                                .foregroundColor(.white.opacity(0.8))
-                            
-                            Text("No Steps Yet")
-                                .font(.system(size: 24, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                            
-                            Text("Add steps and groups to build your routine")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white.opacity(0.8))
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 32)
+                        // Empty state scrolls so the keyboard doesn't crush it.
+                        ScrollView {
+                            VStack(spacing: 24) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.white.opacity(0.8))
+                                
+                                Text("No Steps Yet")
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                
+                                Text("Add steps and groups to build your routine")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.8))
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 32)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 40)
+                            .padding(.bottom, 40)
                         }
+                        .scrollDismissesKeyboard(.interactively)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.top, 40)
                     } else {
-                        // Styled List with drag-to-reorder and swipe-to-delete
+                        // Styled List with drag-to-reorder and swipe-to-delete.
+                        // List handles its own keyboard avoidance and scrolling.
                         List {
                             ForEach(items) { item in
                                 RoutineItemRow(item: item) {
@@ -117,6 +132,7 @@ struct RoutineEditorView: View {
                         .listStyle(.plain)
                         .scrollContentBackground(.hidden)
                         .background(Color.clear)
+                        .scrollDismissesKeyboard(.interactively)
                         .padding(.horizontal, 8)
                     }
                     

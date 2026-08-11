@@ -9,6 +9,8 @@ struct ActiveTimerView: View {
     @EnvironmentObject var backgroundColorManager: BackgroundColorManager
     @Environment(\.dismiss) private var dismiss
     
+    @State private var showingCancelAlert = false
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -21,6 +23,36 @@ struct ActiveTimerView: View {
                 .ignoresSafeArea()
                 // Animate background only when the step identity changes to avoid jarring effects
                 .animation(.easeInOut(duration: 0.5), value: timerManager.currentStep?.step.id)
+                
+                // Cancel button (top-left) — only while the timer is running/paused.
+                // The completion screen already has its own "Back to Home" action.
+                if timerManager.state != .completed {
+                    VStack {
+                        HStack {
+                            Button(action: { showingCancelAlert = true }) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .frame(width: 40, height: 40)
+                                    .background(
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                            .opacity(0.4)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                            )
+                                    )
+                                    .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                            }
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    .padding(.top, 16)
+                    .transition(.opacity)
+                }
                 
                 VStack(spacing: 0) {
                     Spacer()
@@ -515,6 +547,15 @@ struct ActiveTimerView: View {
         }
         .onDisappear {
             timerManager.stopRoutine()
+        }
+        .alert("Cancel Routine?", isPresented: $showingCancelAlert) {
+            Button("Keep Going", role: .cancel) { }
+            Button("Cancel Routine", role: .destructive) {
+                timerManager.stopRoutine()
+                dismiss()
+            }
+        } message: {
+            Text("This will stop the timer and discard your progress for this run.")
         }
         .onChange(of: timerManager.state) { _, newState in
             handleTimerStateChange(newState)
